@@ -90,6 +90,77 @@ export default function RootLayout() {
         <Stack.Screen name="UserProfile" />
 
         <Stack.Screen name="SingleChat" />
+
+        <Stack.Screen name="search/QucikSearch" 
+        
+        options={{
+          headerTitle: 'Quick Search',
+          headerShown: true,
+        }}
+
+        />
+
+        <Stack.Screen name="search/AdvanceSearch"
+          options={{
+            headerTitle: 'Advanced Search',
+            headerShown: true,
+          }}
+        />
+
+        <Stack.Screen name="edit/EditProfile" 
+        options={{
+          headerTitle: 'Edit Profile',
+          headerShown: true,
+        }}
+        />
+
+        <Stack.Screen name="edit/BasicInfo"
+          options={{
+            headerTitle: 'Basic Info',
+            headerShown: true,
+          }}
+        />
+
+        <Stack.Screen name="edit/WeightHeight"
+
+          options={{
+            headerTitle: 'Weight Height',
+            headerShown: true,
+          }}  
+        />
+
+        <Stack.Screen name="edit/Education"
+          options={{
+            headerTitle: 'Education',
+            headerShown: true,
+          }}
+        />
+
+        <Stack.Screen name="edit/FamilyDetails"
+          options={{
+            headerTitle: 'Family Details',
+            headerShown: true,
+          }}
+        />
+
+        <Stack.Screen name="edit/ContactDetails"
+
+          options={{
+            headerTitle: 'Contact Details',
+            headerShown: true,
+          }}
+        />
+
+        <Stack.Screen name="edit/Preferences"
+          options={{
+            headerTitle: 'Preferences',
+            headerShown: true,
+          }} 
+        
+        
+        />
+
+        
       </Stack>
 
     </GlobalProvider>
