@@ -1,25 +1,47 @@
 import React, { useState } from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import QuickSearch from "./QuickSearch";
 import AdvancedSearch from "./AdvancedSearch";
 import Recommendations from "./Recommendations";
+import { useRouter } from "expo-router";
+import { Button } from "react-native-paper";
 
 
 const SearchComponent = () => {
   const [activeComponent, setActiveComponent] = useState("home");
+  const router = useRouter();
 
   return (
     <View style={styles.container}>
       {/* Header Buttons */}
       <View style={styles.header}>
-        <Button title="Home" onPress={() => setActiveComponent("home")} />
-        <Button title="Quick Search" onPress={() => setActiveComponent("quickSearch")} />
-        <Button title="Advanced Search" onPress={() => setActiveComponent("advancedSearch")} />
+       
+          <Button
+            mode="contained"
+            onPress={() =>{
+              router.push('/search/QucikSearch')
+            } } >
+            Quick Search
+          </Button>
+
+          <Button
+            mode="contained"
+            onPress={() => {
+              router.push('/search/AdvanceSearch')
+            }} >
+            Advance Search
+          </Button>
       </View>
 
       {/* Saved Profiles */}
       <View style={styles.savedProfiles}>
-        <Text>Saved Profiles</Text>
+        <Text
+        style={{
+          fontSize: 20,
+          fontWeight: "bold",
+          marginBottom: 10,
+        }}
+        >Saved Profiles</Text>
         <View style={styles.profileRow}>
           {Array.from({ length: 6 }).map((_, index) => (
             <View key={index} style={styles.savedProfile}>
@@ -29,10 +51,7 @@ const SearchComponent = () => {
         </View>
       </View>
 
-      {/* Active Component Rendering */}
-      {activeComponent === "quickSearch" && <QuickSearch />}
-      {activeComponent === "advancedSearch" && <AdvancedSearch />}
-      {activeComponent === "home" && <Recommendations setActiveComponent={setActiveComponent} />}
+       <Recommendations setActiveComponent={setActiveComponent} />
     </View>
   );
 };
