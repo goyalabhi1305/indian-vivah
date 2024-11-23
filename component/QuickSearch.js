@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, FlatList, StyleSheet } from "react-native";
 import { Card, Avatar, Button } from "react-native-paper";
+import ProfileCard from "./Card/ProfileCard";
 
 const QuickSearch = () => {
   const [showCards, setShowCards] = useState(false); // State to toggle between search form and cards
-  
+
   // Sample card data
   const cards = Array.from({ length: 10 }).map((_, index) => ({
     id: index.toString(),
@@ -18,38 +19,7 @@ const QuickSearch = () => {
   }));
 
   const renderCard = ({ item }) => (
-    <Card style={styles.card}>
-      <Card.Title
-        title={item.name}
-        subtitle={`Location: ${item.location}, Education: ${item.education}`}
-        left={(props) => <Avatar.Text {...props} label={item.name[0]} />}
-        right={(props) => (
-          <Text style={styles.heartIcon} {...props}>
-            ❤️
-          </Text>
-        )}
-      />
-      <Card.Content>
-        <Text>Age: {item.age}</Text>
-        <Text>Weight: {item.weight} kg</Text>
-        <Text>Height: {item.height} cm</Text>
-        <Text>Status: {item.status}</Text>
-      </Card.Content>
-      <Card.Actions
-      style={{
-        display: "flex",
-        gap:10
-      }}
-      >
-       
-        <Button mode="contained" onPress={() => { }}>
-          Send
-        </Button>
-        <Button mode="outlined" onPress={() => { }}>
-            Ignore
-        </Button>
-      </Card.Actions>
-    </Card>
+   <ProfileCard item={item} />
   );
 
   return (
@@ -57,28 +27,33 @@ const QuickSearch = () => {
       {showCards ? (
         // Show Cards when `showCards` is true
         <>
-          <Text style={styles.headerText}>Search Results</Text>
+          <Text style={styles.title}>Quick Search Results</Text>
+
           <FlatList
             data={cards}
             renderItem={renderCard}
             keyExtractor={(item) => item.id}
             numColumns={1}  // Ensure only one component per row
+            showsVerticalScrollIndicator={false}
           />
         </>
       ) : (
         // Show Search Form when `showCards` is false
-        <View>
-          <Text style={styles.title}>Quick Search</Text>
+        <View
+        style={{
+          margin: 20,
+        }}
+        >
           <View style={styles.searchBox}>
             <TextInput style={styles.input} placeholder="Search by location" />
             <TextInput style={styles.input} placeholder="Search by caste" />
             <TextInput style={styles.input} placeholder="Search by age" />
           </View>
-          <Button 
-          mode="contained"
-          onPress={() => setShowCards(true)} >
+          <Button
+            mode="contained"
+            onPress={() => setShowCards(true)} >
             Search
-            </Button>
+          </Button>
         </View>
       )}
     </View>
@@ -86,8 +61,14 @@ const QuickSearch = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 0},
-  title: { fontSize: 20, marginBottom: 20 },
+  container: { padding: 0,
+    margin: 0,
+   },
+  title: { fontSize: 20, marginBottom: 10,
+    marginLeft:20,
+    marginTop:10,
+    fontWeight: "bold"
+   },
   headerText: { fontSize: 20, fontWeight: "bold", marginBottom: 10 },
   searchBox: { backgroundColor: "lightgray", padding: 20, marginBottom: 20 },
   input: {
