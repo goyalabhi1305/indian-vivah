@@ -60,13 +60,15 @@ const AdvancedSearch = () => {
   };
 
   return (
-    <Provider>
-      <View style={styles.container}>
+      <View >
         {showInputs ? (
           <ScrollView
           showsVerticalScrollIndicator={false}
+          style={{
+            padding: 16,
+            marginBottom: 10
+          }}
           >
-            <Text style={styles.header}>Advanced Search</Text>
 
             {/* Personal Details */}
             <Text style={styles.sectionHeader}>Personal Details</Text>
@@ -121,19 +123,25 @@ const AdvancedSearch = () => {
             <TextInput label="Dosh" style={styles.input} />
 
             {/* Search Button */}
-            <Button mode="contained" style={styles.button} onPress={handleSearch}>
+            <Button mode="contained" style={
+              {
+                marginTop: 16,
+                paddingVertical: 0,
+                marginBottom: 32,
+              }
+            } onPress={handleSearch}>
               Search
             </Button>
           </ScrollView>
         ) : (
           <View style={styles.resultContainer}>
-            <Button
+            {/* <Button
               mode="outlined"
               style={styles.backButton}
               onPress={handleBack}
             >
               Back to Search
-            </Button>
+            </Button> */}
             <FlatList
               data={searchResults}
               showsVerticalScrollIndicator={false}
@@ -172,7 +180,6 @@ const AdvancedSearch = () => {
           </View>
         )}
       </View>
-    </Provider>
   );
 };
 
@@ -180,7 +187,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     // backgroundColor: '#fff',
-    padding: 16,
+    // padding: 16,
+    backgroundColor: 'red',
   },
   header: {
     fontSize: 24,
@@ -189,7 +197,7 @@ const styles = StyleSheet.create({
   },
   sectionHeader: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '700',
     marginVertical: 8,
   },
   input: {
@@ -202,10 +210,15 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 16,
-    paddingVertical: 0
+    paddingVertical: 0,
+    marginBottom: 32,
   },
   resultContainer: {
-    flex: 1,
+    // flex: 1,
+    marginBotton: 10,
+    paddingLeft: 16,
+    paddingRight: 16,
+    marginTop: 15
   },
   backButton: {
     marginBottom: 8,
