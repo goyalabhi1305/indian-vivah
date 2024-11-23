@@ -20,7 +20,11 @@ const Recommendations = ({ setActiveComponent }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text>Recommendations</Text>
+        <Text   style={{
+          fontSize: 20,
+          fontWeight: "bold",
+          marginBottom: 10,
+        }}>Recommendations</Text>
         <TouchableOpacity onPress={() => setShowAll(!showAll)}>
           <Text style={styles.link}>{showAll ? "Show Less" : "See All"}</Text>
         </TouchableOpacity>
@@ -42,7 +46,9 @@ const Recommendations = ({ setActiveComponent }) => {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { flexDirection: "row", justifyContent: "space-between", marginBottom: 10 },
-  link: { color: "blue" },
+  link: { color: "blue",
+    marginTop: 10
+   },
   card: {
     flex: 1,
     margin: 10,
