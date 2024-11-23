@@ -10,6 +10,8 @@ import MessageComponent from '../component/MessageComponent';
 import SearchComponent from '../component/SearchComponent';
 import { useRouter } from 'expo-router';
 import PremiumMembership from '../component/PremiumComponent';
+import ActivityComponent from '../component/ActivityComponent';
+import SelfProfileComponent from '../component/SelfProfileComponent';
 
 const Tab = createBottomTabNavigator();
 
@@ -70,7 +72,6 @@ export default function MyComponent() {
           headerShown: true,
           headerStyle: {
             backgroundColor: '#663399',
-            padding: 0,
             height: 60
           },
           headerTintColor: '#fff',
@@ -98,7 +99,6 @@ export default function MyComponent() {
           headerShown: true,
           headerStyle: {
             backgroundColor: '#663399',
-            padding: 0,
             height: 60
           },
           headerTintColor: '#fff',
@@ -126,7 +126,6 @@ export default function MyComponent() {
           headerShown: true,
           headerStyle: {
             backgroundColor: '#663399',
-            padding: 0,
             height: 60
           },
           headerTintColor: '#fff',
@@ -154,7 +153,6 @@ export default function MyComponent() {
           headerShown: true,
           headerStyle: {
             backgroundColor: '#663399',
-            padding: 0,
             height: 60
           },
           headerTintColor: '#fff',
@@ -175,6 +173,33 @@ export default function MyComponent() {
         }}
       />
       <Tab.Screen
+        name="My Profile"
+        component={ProfileScreen}
+        options={{
+          tabBarLabel: 'My Profile',
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: '#663399',
+            height: 60
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+          tabBarIcon: ({ color, size }) => {
+            return <Icon name="account" size={size} color={color} />;
+          },
+          headerRight: () => (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => router.push('Notification')}
+            >
+              <Icon name="bell" size={24} color="#fff" style={{ marginRight: 20 }} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Tab.Screen
         name="Premium"
         component={PremiumScreen}
         options={{
@@ -182,7 +207,6 @@ export default function MyComponent() {
           headerShown: true,
           headerStyle: {
             backgroundColor: '#663399',
-            padding: 0,
             height: 60
           },
           headerTintColor: '#fff',
@@ -233,8 +257,16 @@ function SearchScreen() {
 function ActivityScreen() {
   return (
     <View style={styles.container}>
-      <Text variant="headlineMedium">Activity Screen</Text>
+     <ActivityComponent/>
     </View>
+  );
+}
+
+function ProfileScreen() {
+  return (
+    // <View style={styles.container}>
+     <SelfProfileComponent/>
+    // </View>
   );
 }
 
