@@ -4,6 +4,8 @@ import { useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-paper';
+import ToastManager from 'toastify-react-native';
+import Toast from 'react-native-toast-message';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -17,10 +19,14 @@ export default function RootLayout() {
     const fetchData = async () => {
 
       const user = await AsyncStorage.getItem("userdetails");
-      console.log(user);
+      const showOnboarding = await AsyncStorage.getItem("showOnboarding");
+      console.log("showOnboarding",showOnboarding);
       if (user) {
-        router.replace('/');
-        // router.replace('userDetails/step1');
+        if (!showOnboarding) {
+          router.replace('/');
+        } else {
+          router.replace('userDetails/step1');
+        }
       } else {
         router.replace('(auth)/SignIn');
       }
@@ -34,6 +40,8 @@ export default function RootLayout() {
 
   return (
     <GlobalProvider>
+      <ToastManager/>
+      <Toast />
       <Stack
         screenOptions={{
           headerStyle: {
