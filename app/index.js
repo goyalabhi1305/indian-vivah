@@ -12,20 +12,28 @@ import { useRouter } from 'expo-router';
 import PremiumMembership from '../component/PremiumComponent';
 import ActivityComponent from '../component/ActivityComponent';
 import SelfProfileComponent from '../component/SelfProfileComponent';
+import HeaderLeftComponent from '../component/HeaderLeftComponent';
 
 const Tab = createBottomTabNavigator();
 
 export default function MyComponent() {
   const router = useRouter();
   return (
+
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
+        tabBarActiveTintColor: '#663399',
+        tabBarInactiveTintColor: '#000',
       }}
       tabBar={({ navigation, state, descriptors, insets }) => (
         <BottomNavigation.Bar
           navigationState={state}
           safeAreaInsets={insets}
+
+          // make z-index low
+          style={{ elevation: 0, zIndex: 0 }}
+
           onTabPress={({ route, preventDefault }) => {
             const event = navigation.emit({
               type: 'tabPress',
@@ -74,6 +82,7 @@ export default function MyComponent() {
             backgroundColor: '#663399',
             height: 60
           },
+
           headerTintColor: '#fff',
           headerTitleStyle: {
             fontWeight: 'bold',
@@ -88,6 +97,10 @@ export default function MyComponent() {
             >
               <Icon name="bell" size={24} color="#fff" style={{ marginRight: 20 }} />
             </TouchableOpacity>
+          ),
+          headerTitle: '',
+          headerLeft: () => (
+            <HeaderLeftComponent />
           ),
         }}
       />
@@ -135,6 +148,7 @@ export default function MyComponent() {
           tabBarIcon: ({ color, size }) => {
             return <Icon name="magnify" size={size} color={color} />;
           },
+
           headerRight: () => (
             <TouchableOpacity
               activeOpacity={0.7}
@@ -227,6 +241,7 @@ export default function MyComponent() {
         }}
       />
     </Tab.Navigator>
+
   );
 }
 
@@ -257,7 +272,7 @@ function SearchScreen() {
 function ActivityScreen() {
   return (
     <View style={styles.container}>
-     <ActivityComponent/>
+      <ActivityComponent />
     </View>
   );
 }
@@ -265,7 +280,7 @@ function ActivityScreen() {
 function ProfileScreen() {
   return (
     // <View style={styles.container}>
-     <SelfProfileComponent/>
+    <SelfProfileComponent />
     // </View>
   );
 }
