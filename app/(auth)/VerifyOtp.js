@@ -3,8 +3,10 @@ import React from 'react';
 import { Button, TextInput } from 'react-native-paper';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { VerifyOtp } from '../../services/endpoint';
+import Toast from 'react-native-toast-message';
 
-const VerifyOtp = () => {
+const VerifyOtpCode = () => {
     const [code, setCode] = React.useState('');
     const { phone } = useLocalSearchParams();
     const router = useRouter();
@@ -14,6 +16,28 @@ const VerifyOtp = () => {
     const handleChange = (text) => {
         setCode(text);
     };
+
+    const handleVerifyOtp = async (code) => {
+        try {
+            const response = await VerifyOtp({ phone: phone, otp: code });
+            console.log(code);
+            await AsyncStorage.setItem('userdetails', JSON.stringify({ phone: phone }));
+            await AsyncStorage.setItem('token', response.data.token);
+            await AsyncStorage.setItem('showOnboarding', (response.data.showOnboarding || true).toString());
+
+            if (response.data.showOnboarding || true) {
+                router.replace('userDetails/step1');
+            }else{
+                router.replace('/');
+            }
+        } catch (error) {
+            Toast.show({
+                type: 'error',
+                text1: 'Invalid OTP',
+            });
+            console.error(error);
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -40,8 +64,7 @@ const VerifyOtp = () => {
                 mode="contained"
                 style={styles.button}
                 onPress={() => {
-                    AsyncStorage.setItem('userdetails', JSON.stringify({ phone }));
-                    router.replace('/');
+                    handleVerifyOtp(code);
                 }}
             >
                 Verify
@@ -51,7 +74,7 @@ const VerifyOtp = () => {
     );
 };
 
-export default VerifyOtp;
+export default VerifyOtpCode;
 
 const styles = StyleSheet.create({
     container: {
