@@ -12,6 +12,8 @@ import PhoneInput from "react-native-phone-number-input";
 import images from "../../constants/images";
 import { Button } from "react-native-paper";
 import { useRouter } from "expo-router";
+import { CreateUser } from "../../services/endpoint";
+import Toast from "react-native-toast-message";
 
 const App = () => {
     const [value, setValue] = useState("");
@@ -20,24 +22,51 @@ const App = () => {
     const [showMessage, setShowMessage] = useState(false);
     const router = useRouter();
     const phoneInput = useRef(null);
+    const [loading, setLoading] = useState(false);
+
+    const handleCreateUser = async (phone) => {
+        try{
+
+            setLoading(true);
+            
+            const params = {
+                phone: phone
+            }
+
+            const response = await CreateUser(params);
+           
+            router.push({
+                pathname: '(auth)/VerifyOtp',
+                params: { phone: phone },
+            });
+
+            setLoading(false);
+        }catch(e){
+            
+            Toast.show({
+                type: 'error',
+                text1: 'Error',
+                text2: 'Something went wrong',
+              
+            });
+
+            setLoading(false);
+        }
+    }
+
     return (
         <>
             <StatusBar barStyle="light-content" />
             <View style={styles.container}>
                 <Image
                     source={images.AppLogo}
-                    style={{ height: 150, marginBottom: 200, 
+                    style={{
+                        height: 150, marginBottom: 200,
                         width: 300, borderRadius: 20
                     }}
                     resizeMode="contain"
                 />
-                {/* {showMessage && (
-            <View style={styles.message}>
-              <Text>Value : {value}</Text>
-              <Text>Formatted Value : {formattedValue}</Text>
-              <Text>Valid : {valid ? "true" : "false"}</Text>
-            </View>
-          )} */}
+
 
                 <PhoneInput
                     ref={phoneInput}
@@ -71,32 +100,37 @@ const App = () => {
                 />
 
                 <View
-                style={{
-                    width: '90%',
-                }}
+                    style={{
+                        width: '90%',
+                    }}
                 >
-                {
-                    showMessage && !valid && (
-                        <Text style={{ color: "red", marginTop: 0, textAlign: 'left', display:'flex', justifyContent:'flex-start' }}>
-                            Invalid Phone Number
-                        </Text>
-                    )
-                }
+                    {
+                        showMessage && !valid && (
+                            <Text style={{ color: "red", marginTop: 0, textAlign: 'left', display: 'flex', justifyContent: 'flex-start' }}>
+                                Invalid Phone Number
+                            </Text>
+                        )
+                    }
                 </View>
 
                 <Button
                     mode="contained"
-                    style={{ width: "90%", marginTop: 20, borderRadius: 10,
+                    style={{
+                        width: "90%", marginTop: 20, borderRadius: 10,
                         marginBottom: 50
-                     }}
+                    }}
+                    loading={loading}
+                    disabled={loading}
+                    setLoading={loading}
                     onPress={() => {
                         const checkValid = phoneInput.current?.isValidNumber(value);
                         if (checkValid) {
-                            router.push({
-                                pathname: '(auth)/VerifyOtp',
-                                params: { phone: value },
-                              });
-                        }else{
+                            // router.push({
+                            //     pathname: '(auth)/VerifyOtp',
+                            //     params: { phone: value },
+                            // });
+                            handleCreateUser(value);
+                        } else {
                             setShowMessage(true);
                             setValid(checkValid ? checkValid : false);
                         }
@@ -104,18 +138,6 @@ const App = () => {
                 >
                     Continue
                 </Button>
-                {/* <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              const checkValid = phoneInput.current?.isValidNumber(value);
-              setShowMessage(true);
-              setValid(checkValid ? checkValid : false);
-            }}
-          >
-            <Text>Check</Text>
-          </TouchableOpacity> */}
-
-
 
             </View>
         </>
