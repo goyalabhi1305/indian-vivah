@@ -1,5 +1,7 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
 import React, { useState, useRef } from 'react';
-import { Animated, Dimensions, StyleSheet, TouchableOpacity, View, TouchableWithoutFeedback } from 'react-native';
+import { Animated, Dimensions, StyleSheet, TouchableOpacity, View, TouchableWithoutFeedback, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const { height, width } = Dimensions.get('window');
@@ -7,6 +9,7 @@ const { height, width } = Dimensions.get('window');
 const HeaderLeftComponent = () => {
     const [showDrawer, setShowDrawer] = useState(false);
     const drawerAnim = useRef(new Animated.Value(-250)).current; // Keep this animated value in a ref
+    const router = useRouter();
 
     // Function to handle drawer opening/closing animation
     const toggleDrawer = () => {
@@ -53,7 +56,7 @@ const HeaderLeftComponent = () => {
                     zIndex: 1005,
                     padding: 10,
                     paddingRight: 20,
-                    paddingLeft:5
+                    paddingLeft: 5
                 }}
                 onPress={toggleDrawer}
             >
@@ -73,12 +76,23 @@ const HeaderLeftComponent = () => {
                         left: 0,
                         bottom: 0,
                         width: 250,
-                        height: height + height ,
+                        height: height + height,
                         transform: [{ translateX: drawerAnim }], // Use animated translation to move the drawer
                         zIndex: 1001, // Ensure the drawer appears above the overlay
                     }}
                 >
                     {/* Drawer content can go here */}
+                    <TouchableOpacity
+                        onPress={() => {
+                            AsyncStorage.removeItem('token');
+                            AsyncStorage.removeItem('userdetails');
+                            router.replace('(auth)/SignIn');
+                        }
+                        }
+                        
+                    >
+                        <Text>Logout</Text>
+                    </TouchableOpacity>
                 </Animated.View>
             )}
 
