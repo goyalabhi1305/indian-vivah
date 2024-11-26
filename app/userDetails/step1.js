@@ -1,31 +1,31 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { TextInput, Button } from 'react-native-paper';
-import useSWR from 'swr';
-import { GetOnBoardingSheet } from '../../services/endpoint';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { TextInput, Button, HelperText } from 'react-native-paper';
 import { AutocompleteDropdown, AutocompleteDropdownContextProvider } from 'react-native-autocomplete-dropdown';
-import { useHeaderHeight } from '@react-navigation/elements';
+import DropDownPicker from 'react-native-dropdown-picker';
+import FieldHelperText from '../../component/FieldHelperText';
+import useSWR from 'swr';
+import { GetOnBoardingSheet, UserOnBoard } from '../../services/endpoint';
 // import DatePicker from 'react-native-date-picker';
 
 const Step1 = () => {
   const router = useRouter();
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    gender: '',
-    dob: '',
+    // age: '',
+    gender: null,
     email: '',
-    maritalStatus: '',
-    bloodGroup: '',
+    religion: null,
+    caste: null,
+    subCaste: '',
+    // maritalStatus: null,
+    bloodGroup: null,
   });
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [religions, setReligions] = useState([]);
-  const [casts, setCasts] = useState([]);
-  const [selectedCaste, setSelectedCaste] = useState(null);
 
-
-  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const fetcher = async () => {
     const response = await GetOnBoardingSheet();
@@ -33,6 +33,76 @@ const Step1 = () => {
   }
 
   const { data } = useSWR('getOnBoardingSheetData', fetcher);
+
+
+  const fetcher2 = async () => {
+    const response = await UserOnBoard();
+    return response.data?.data;
+  }
+
+  const {data:formFetchedData} = useSWR('getOnboardData', fetcher2);
+
+  useEffect(() => {
+    if(formFetchedData){
+      setFormData({
+        firstName: formFetchedData.firstName,
+        lastName: formFetchedData.lastName,
+        gender: formFetchedData?.gender,
+        email: formFetchedData.email,
+        religion: formFetchedData.religion ? JSON.parse(formFetchedData.religion) : null,
+        caste: formFetchedData.caste ? JSON.parse(formFetchedData.caste) : null,
+        subCaste: formFetchedData.subCaste,
+        bloodGroup: formFetchedData.bloodGroup,
+
+      });
+
+      console.log("formFetchedData",formFetchedData?.religion);
+    }
+  }, [formFetchedData]);
+
+  const [errors, setErrors] = useState({});
+
+  const [openGender, setOpenGender] = useState(false);
+  const [genderItems, setGenderItems] = useState([
+    { label: 'Male', value: 'MALE' },
+    { label: 'Female', value: 'FEMALE' },
+    { label: 'Other', value: 'OTHER' }
+  ]);
+
+
+
+  const [openBloodGroup, setOpenBloodGroup] = useState(false);
+  const [bloodGroupItems, setBloodGroupItems] = useState([
+    { label: 'A+', value: 'A+' },
+    { label: 'A-', value: 'A-' },
+    { label: 'B+', value: 'B+' },
+    { label: 'B-', value: 'B-' },
+    { label: 'AB+', value: 'AB+' },
+    { label: 'AB-', value: 'AB-' },
+    { label: 'O+', value: 'O+' },
+    { label: 'O-', value: 'O-' }
+  ]);
+
+  const [religions, setReligions] = useState([
+
+  ]);
+
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  const [casts, setCasts] = useState([]);
+
+  const handleInputChange = (name, value) => {
+    console.log("name", name);
+    console.log("value", value);
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+    setErrors((prev) => ({
+      ...prev,
+      [name]: '',
+    }));
+  };
 
   useEffect(() => {
     if (data) {
@@ -44,19 +114,6 @@ const Step1 = () => {
     }
   }, [data]);
 
-  console.log("selectedItem", selectedItem);
-
-  const handleInputChange = (name, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleContinue = () => {
-    router.replace('userDetails/step2');
-  };
-
   useEffect(() => {
 
     if (selectedItem) {
@@ -66,18 +123,63 @@ const Step1 = () => {
         return name ? { id: parseInt(id), title: name } : null;
       }
 
-    ).filter(Boolean);;
-    console.log("castArray***", castArray);
-    setCasts(castArray);
+      ).filter(Boolean);;
+      console.log("castArray***", castArray);
+      setCasts(castArray);
     }
 
   }, [selectedItem]);
 
-  const headerHeight = useHeaderHeight();
+  const validateFields = () => {
+    const newErrors = {};
+    Object.keys(formData).forEach((key) => {
+      if (!formData[key]) {
+        newErrors[key] = 'This field is required.';
+      }
+    });
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleContinue = async () => {
+    if (validateFields()) {
+      // Call dummy API on successful validation
+      // console.log('Form submitted:', formData);
+      // setTimeout(() => alert('Form submitted successfully!'), 500);
+      // router.replace('userDetails/step2');
+console.log("formData",formData);
+      try{
+        setLoading(true);
+        const payload = {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          gender: formData.gender,
+          email: formData.email,
+          religion: JSON.stringify(formData.religion),
+          caste: JSON.stringify(formData.caste),
+          gotra: formData.subCaste,
+          bloodGroup: formData.bloodGroup,
+        };
+
+        const response = await UserOnBoard(payload);
+
+
+        router.push('userDetails/step2');
+          
+        setLoading(false);
+      }catch(error){
+        setLoading(false);
+        console.log("error",error);
+      }
+
+    }
+  };
+
+  
 
   return (
-    <AutocompleteDropdownContextProvider headerOffset={headerHeight} >
-      <View style={styles.container}>
+    <AutocompleteDropdownContextProvider>
+      <ScrollView style={styles.container}>
         <Text style={styles.headerText}>Tell us about yourself</Text>
         <View style={styles.formContainer}>
           <TextInput
@@ -86,46 +188,56 @@ const Step1 = () => {
             value={formData.firstName}
             onChangeText={(text) => handleInputChange('firstName', text)}
             style={styles.input}
+            error={!!errors.firstName}
           />
+          <FieldHelperText error={errors.firstName} />
+
           <TextInput
             label="Last Name"
             mode="outlined"
             value={formData.lastName}
             onChangeText={(text) => handleInputChange('lastName', text)}
             style={styles.input}
+            error={!!errors.lastName}
           />
-          <TextInput
-            label="Gender"
-            mode="outlined"
-            value={formData.gender}
-            onChangeText={(text) => handleInputChange('gender', text)}
-            style={styles.input}
-          />
+          <FieldHelperText error={errors.lastName} />
+
           {/* <TextInput
-          label="DOB"
-          mode="outlined"
-          value={formData.dob}
-          onChangeText={(text) => handleInputChange('dob', text)}
-          style={styles.input}
-        /> */}
-          {/* <Button mode='outlined' onPress={() => setOpen(true)} >
-          {formData?.dob ? formData?.dob : 'Select Date'}
-      </Button>
-         <DatePicker
-        modal
-        open={open}
-        date={formData?.dob ? new Date(formData?.dob) : new Date()}
-        onConfirm={(date) => {
-          setOpen(false)
-          setFormData((prev) => ({
-            ...prev,
-            dob: date.toISOString().split('T')[0]
-          }))
-        }}
-        onCancel={() => {
-          setOpen(false)
-        }}
-      /> */}
+            label="Age"
+            mode="outlined"
+            value={formData.age}
+            keyboardType="numeric"
+            onChangeText={(text) => handleInputChange('age', text)}
+            style={styles.input}
+            error={!!errors.age}
+          />
+
+          <FieldHelperText error={errors.age} /> */}
+
+          <View style={styles.input}>
+            <DropDownPicker
+              open={openGender}
+              value={formData.gender}
+              items={genderItems}
+
+              setOpen={setOpenGender}
+              setValue={(callback) => {
+                const value = typeof callback === 'function' ? callback(formData.gender) : callback;
+                handleInputChange('gender', value);
+                console.log('Selected Gender:', value);
+              }}
+              setItems={setGenderItems}
+              
+              placeholder="Select Gender"
+            />
+          </View>
+          {/* <HelperText type="error" visible={!!errors.gender}>
+            {errors.gender}
+          </HelperText> */}
+          <FieldHelperText error={errors.gender} />
+
+
+
 
           <TextInput
             label="Email"
@@ -133,78 +245,127 @@ const Step1 = () => {
             value={formData.email}
             onChangeText={(text) => handleInputChange('email', text)}
             style={styles.input}
+            error={!!errors.email}
           />
+          <FieldHelperText error={errors.email} />
 
-          <View
-            style={{
-              width: '100%',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginTop: 20,
-            }}
-          >
+          <View style={styles.input}>
             <AutocompleteDropdown
               clearOnFocus={false}
               closeOnBlur={true}
-              closeOnSubmit={false}
-              initialValue={{ id: '2' }} // or just '2'
-              onSelectItem={setSelectedItem}
+              placeholder="Select Religion"
+              onSelectItem={(item) => {
+                setSelectedItem(item);
+                handleInputChange('religion', item)}}
               dataSet={religions}
               inputContainerStyle={{
                 backgroundColor: '#fff',
-                borderRadius: 10,
+                borderRadius: 5,
                 width: '100%',
+                borderColor: '#000',
+                borderWidth: 1,
               }}
-            />;
+              
+              textInputProps={{
+                placeholder: 'Select Religion',
+                autoCorrect: false,
+                autoCapitalize: 'none',
+                style: {
+                  borderRadius: 25,
+                  backgroundColor: '#fff',
+                  color: '#000',
+                  paddingLeft: 18,
+                },
+              }}
+            />
           </View>
+          <FieldHelperText error={errors.religion} />
 
-          <View
-            style={{
-              width: '100%',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginTop: 20,
-            }}
-          >
+
+          <View style={styles.input}>
             <AutocompleteDropdown
               clearOnFocus={false}
               closeOnBlur={true}
-              closeOnSubmit={false}
-              initialValue={{ id: '2' }} // or just '2'
-              onSelectItem={setSelectedCaste}
-              dataSet={casts}
+              placeholder="Select Caste"
               inputContainerStyle={{
                 backgroundColor: '#fff',
-                borderRadius: 10,
+                borderRadius: 5,
                 width: '100%',
+                borderColor: '#000',
+                borderWidth: 1,
               }}
-            />;
+              
+              textInputProps={{
+                placeholder: 'Select Caste',
+                autoCorrect: false,
+                autoCapitalize: 'none',
+                style: {
+                  borderRadius: 25,
+                  backgroundColor: '#fff',
+                  color: '#000',
+                  paddingLeft: 18,
+                },
+              }}
+              onSelectItem={(item) => handleInputChange('caste', item)}
+              dataSet={casts}
+            />
           </View>
+          <FieldHelperText error={errors.caste} />
+
 
           <TextInput
-            label="Marital Status"
+            label="Sub Caste / Gotra"
             mode="outlined"
-            value={formData.maritalStatus}
-            onChangeText={(text) => handleInputChange('maritalStatus', text)}
+            value={formData.subCaste}
+            onChangeText={(text) => handleInputChange('subCaste', text)}
             style={styles.input}
+            error={!!errors.subCaste}
           />
-          <TextInput
-            label="Blood Group"
-            mode="outlined"
-            value={formData.bloodGroup}
-            onChangeText={(text) => handleInputChange('bloodGroup', text)}
-            style={styles.input}
-          />
+          <FieldHelperText error={errors.subCaste} />
+
+          {/* <View style={styles.input}>
+            <DropDownPicker
+              open={openMaritalStatus}
+              value={formData.maritalStatus}
+              items={maritalStatusItems}
+              setOpen={setOpenMaritalStatus}
+              setValue={(value) => handleInputChange('maritalStatus', value)}
+              setItems={setMaritalStatusItems}
+              placeholder="Select Marital Status"
+            />
+          </View>
+          <FieldHelperText error={errors.maritalStatus} /> */}
+
+
+          <View style={styles.input}>
+            <DropDownPicker
+              open={openBloodGroup}
+              value={formData.bloodGroup}
+              items={bloodGroupItems}
+              setOpen={setOpenBloodGroup}
+              setValue={(callback) => {
+                const value = typeof callback === 'function' ? callback(formData.bloodGroup) : callback;
+                handleInputChange('bloodGroup', value);
+                console.log('Selected Blood Group:', value);
+              }}
+              setItems={setBloodGroupItems}
+              placeholder="Select Blood Group"
+            />
+          </View>
+          <FieldHelperText error={errors.bloodGroup} />
+
+
           <Button
             mode="contained"
+            loading={loading}
+            disabled={loading}
             onPress={handleContinue}
             style={styles.button}
-            uppercase={false}
           >
             Continue
           </Button>
         </View>
-      </View>
+      </ScrollView>
     </AutocompleteDropdownContextProvider>
   );
 };
@@ -220,18 +381,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   formContainer: {
-    marginTop: 20,
+    marginTop: 10,
     width: '100%',
-    alignItems: 'center',
   },
   input: {
     width: '100%',
-    marginTop: 15,
+    marginTop: 10,
+    // marginBottom: 10,
   },
   button: {
-    width: '100%',
     marginTop: 30,
-    backgroundColor: '#6200ee',
   },
 });
 
