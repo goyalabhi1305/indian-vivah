@@ -1703,6 +1703,11 @@
   resolved "https://registry.npmjs.org/@react-native-clipboard/clipboard/-/clipboard-1.15.0.tgz"
   integrity sha512-YDMC3E956jn9zE11uKGcQDKS1SO9q72iNHxZyrKY5y9XYwZcA9vo3Xk74+zRnf7cM48drDO0s9lyAPUlOvyhrw==
 
+"@react-native-picker/picker@^2.9.0":
+  version "2.9.0"
+  resolved "https://registry.npmjs.org/@react-native-picker/picker/-/picker-2.9.0.tgz"
+  integrity sha512-khEhIW/uhfMqq/+tvg4rEAiPGT8GX+Y6QydlP2TSMSmRHoSJK+ShXvXZXSr4Sii4imkj4BwvLunGywwtQDODqg==
+
 "@react-native/assets-registry@0.76.2":
   version "0.76.2"
   resolved "https://registry.npmjs.org/@react-native/assets-registry/-/assets-registry-0.76.2.tgz"
@@ -2993,6 +2998,11 @@ cosmiconfig@^5.0.5:
     is-directory "^0.3.1"
     js-yaml "^3.13.1"
     parse-json "^4.0.0"
+
+country-state-city-plus@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.npmjs.org/country-state-city-plus/-/country-state-city-plus-1.1.1.tgz"
+  integrity sha512-kBdO5ubBCBKzu19BImWIPoAmc+jI+QQxKXPsmuss1FR2RxgnRrV9A7GkjGl6G7/pEgC8euFeZahElEeEyFQ30w==
 
 create-react-class@^15.6.2:
   version "15.7.0"
@@ -5781,6 +5791,11 @@ react-native-date-picker@^5.0.7:
   version "5.0.7"
   resolved "https://registry.npmjs.org/react-native-date-picker/-/react-native-date-picker-5.0.7.tgz"
   integrity sha512-/RodyCZWjb+f3f4YHqKbWFYczGm+tNngwbVSB6MLGgt5Kl7LQXpv4QE6ybnHW+DM4LteTP8A6lj8LEkQ7+usLQ==
+
+react-native-dropdown-picker@^5.4.6:
+  version "5.4.6"
+  resolved "https://registry.npmjs.org/react-native-dropdown-picker/-/react-native-dropdown-picker-5.4.6.tgz"
+  integrity sha512-T1XBHbE++M6aRU3wFYw3MvcOuabhWZ29RK/Ivdls2r1ZkZ62iEBZknLUPeVLMX3x6iUxj4Zgr3X2DGlEGXeHsA==
 
 react-native-feather@^1.1.2:
   version "1.1.2"
