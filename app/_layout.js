@@ -25,7 +25,7 @@ export default function RootLayout() {
         if (!showOnboarding) {
           router.replace('/');
         } else {
-          router.replace('userDetails/step4');
+          router.replace('userDetails/step1');
         }
       } else {
         router.replace('(auth)/SignIn');
