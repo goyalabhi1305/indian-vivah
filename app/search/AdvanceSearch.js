@@ -4,7 +4,12 @@ import AdvancedSearch from '../../component/AdvancedSearch'
 
 const AdvanceSearch = () => {
   return (
-    <View>
+    <View
+    style={{
+      backgroundColor: "#fff",
+      flex: 1,
+    }}
+    >
       <AdvancedSearch />
     </View>
   )
