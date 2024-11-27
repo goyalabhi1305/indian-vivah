@@ -11,6 +11,8 @@ const VerifyOtpCode = () => {
     const { phone } = useLocalSearchParams();
     const router = useRouter();
 
+    const [loading, setLoading] = React.useState(false);
+
     console.log(phone);
 
     const handleChange = (text) => {
@@ -19,6 +21,7 @@ const VerifyOtpCode = () => {
 
     const handleVerifyOtp = async (code) => {
         try {
+            setLoading(true);
             const response = await VerifyOtp({ phone: phone, otp: code });
             console.log(code);
             await AsyncStorage.setItem('userdetails', JSON.stringify({ phone: phone }));
@@ -36,6 +39,8 @@ const VerifyOtpCode = () => {
                 text1: 'Invalid OTP',
             });
             console.error(error);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -66,6 +71,9 @@ const VerifyOtpCode = () => {
                 onPress={() => {
                     handleVerifyOtp(code);
                 }}
+                loading={loading}
+                disabled={code.length !== 4 || loading}
+
             >
                 Verify
             </Button>
@@ -104,5 +112,6 @@ const styles = StyleSheet.create({
         width: '100%',
         alignSelf: 'stretch', // Ensures the button takes the full width available
         marginTop: 20,
+        backgroundColor:'#ff4f4f'
     },
 });
