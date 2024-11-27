@@ -3,10 +3,15 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, FlatList } from 'react
 import { Button } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
+import { UserOnBoard, UserOnBoardFormData } from '../../services/endpoint';
+import Toast from 'react-native-toast-message';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Step5 = () => {
   const [images, setImages] = useState([]);
+  
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const pickImage = async () => {
     // Ask for media library permissions
@@ -34,10 +39,44 @@ const Step5 = () => {
     }
   };
 
-  const handleContinue = () => {
-    console.log('Uploaded Images:', images);
-    // Navigate to the next step or perform any action
-    router.push('/');
+  const handleContinue = async () => {
+
+    try {
+      setLoading(true);
+      console.log('Uploading Images:', images);
+      const formData = new FormData();
+      formData.append('avatar', {
+        uri: images[0],
+        type: 'image/jpeg',
+        name: 'profile.jpg', // Adjust the name according to your image name
+      });
+
+      images.forEach((image, index) => {
+        formData.append(`fivePics`, {
+          uri: image,
+          type: 'image/jpeg',
+          name: `image_${index + 1}.jpg`, // Adjust the name according to your image name
+        });
+      });
+
+      const response = await UserOnBoardFormData(formData);
+
+      await AsyncStorage.setItem('userdetails', JSON.stringify(response.data));
+      await AsyncStorage.setItem('showOnboarding', 'false');
+
+      console.log('Uploaded Images:', images);
+
+      setLoading(false);
+      // Navigate to the next step or perform any action
+      router.replace('/');
+    } catch (error) {
+      setLoading(false);
+      Toast.show({
+        type: 'error',
+        text1: 'Error uploading images!',
+      });
+      console.log(error);
+    }
 
   };
 
@@ -76,7 +115,8 @@ const Step5 = () => {
         mode="contained"
         onPress={handleContinue}
         style={styles.button}
-        disabled={images.length === 0}
+        disabled={images.length === 0 || loading}
+        loading={loading}
       >
         Continue
       </Button>
@@ -122,7 +162,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   galleryButton: {
-    backgroundColor: '#6200ee',
+    backgroundColor:'#ff4f4f',
     padding: 10,
     borderRadius: 5,
     marginBottom: 20,
@@ -133,8 +173,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   button: {
+    backgroundColor:'#ff4f4f',
     width: '100%',
-    backgroundColor: '#6200ee',
     marginBottom: 20,
   },
 });
