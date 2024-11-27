@@ -57,7 +57,9 @@ const SearchComponent = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 10 },
+  container: { flex: 1, padding: 10,
+    backgroundColor: '#fff',
+   },
   header: { flexDirection: "row", justifyContent: "space-between", marginBottom: 20 },
   savedProfiles: { marginBottom: 20 },
   profileRow: { flexDirection: "row", flexWrap: "wrap" },
