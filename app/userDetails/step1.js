@@ -1,12 +1,13 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { TextInput, Button, HelperText } from 'react-native-paper';
+import { TextInput, Button, HelperText, ActivityIndicator } from 'react-native-paper';
 import { AutocompleteDropdown, AutocompleteDropdownContextProvider } from 'react-native-autocomplete-dropdown';
 import DropDownPicker from 'react-native-dropdown-picker';
 import FieldHelperText from '../../component/FieldHelperText';
 import useSWR from 'swr';
 import { GetOnBoardingSheet, UserOnBoard } from '../../services/endpoint';
+import Toast from 'react-native-toast-message';
 // import DatePicker from 'react-native-date-picker';
 
 const Step1 = () => {
@@ -32,7 +33,7 @@ const Step1 = () => {
     return response.data;
   }
 
-  const { data } = useSWR('getOnBoardingSheetData', fetcher);
+  const { data, isLoading:isLoading2 } = useSWR('getOnBoardingSheetData', fetcher);
 
 
   const fetcher2 = async () => {
@@ -40,7 +41,7 @@ const Step1 = () => {
     return response.data?.data;
   }
 
-  const {data:formFetchedData} = useSWR('getOnboardData', fetcher2);
+  const {data:formFetchedData, isLoading} = useSWR('getOnboardData', fetcher2);
 
   useEffect(() => {
     if(formFetchedData){
@@ -51,12 +52,14 @@ const Step1 = () => {
         email: formFetchedData.email,
         religion: formFetchedData.religion ? JSON.parse(formFetchedData.religion) : null,
         caste: formFetchedData.caste ? JSON.parse(formFetchedData.caste) : null,
-        subCaste: formFetchedData.subCaste,
+        subCaste: formFetchedData.gotra,
         bloodGroup: formFetchedData.bloodGroup,
 
       });
 
-      console.log("formFetchedData",formFetchedData?.religion);
+      const regiousData = formFetchedData.religion ?  JSON.parse(formFetchedData.religion) : null;
+      setReligionId(regiousData?.id);
+
     }
   }, [formFetchedData]);
 
@@ -87,13 +90,13 @@ const Step1 = () => {
 
   ]);
 
+  const [religionId, setReligionId] = useState('');
+
   const [selectedItem, setSelectedItem] = useState(null);
 
   const [casts, setCasts] = useState([]);
 
   const handleInputChange = (name, value) => {
-    console.log("name", name);
-    console.log("value", value);
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -117,14 +120,12 @@ const Step1 = () => {
   useEffect(() => {
 
     if (selectedItem) {
-      console.log("selectedItem", selectedItem);
       const castArray = data?.caste[selectedItem?.id]?.[0]?.map((item) => {
         const [id, name] = Object.entries(item)[0];
         return name ? { id: parseInt(id), title: name } : null;
       }
 
       ).filter(Boolean);;
-      console.log("castArray***", castArray);
       setCasts(castArray);
     }
 
@@ -142,13 +143,17 @@ const Step1 = () => {
   };
 
   const handleContinue = async () => {
+    Toast.show({
+      type: 'error',
+      text1: 'Error',
+    });
     if (validateFields()) {
       // Call dummy API on successful validation
       // console.log('Form submitted:', formData);
       // setTimeout(() => alert('Form submitted successfully!'), 500);
       // router.replace('userDetails/step2');
-console.log("formData",formData);
       try{
+        
         setLoading(true);
         const payload = {
           firstName: formData.firstName,
@@ -168,12 +173,29 @@ console.log("formData",formData);
           
         setLoading(false);
       }catch(error){
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+        });
         setLoading(false);
         console.log("error",error);
       }
 
     }
   };
+
+  if(isLoading || isLoading2){
+    return <View
+    style={{
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+    >
+      <ActivityIndicator size="large" />
+    </View>
+  }
+
 
   
 
@@ -249,36 +271,41 @@ console.log("formData",formData);
           />
           <FieldHelperText error={errors.email} />
 
-          <View style={styles.input}>
-            <AutocompleteDropdown
-              clearOnFocus={false}
-              closeOnBlur={true}
-              placeholder="Select Religion"
-              onSelectItem={(item) => {
-                setSelectedItem(item);
-                handleInputChange('religion', item)}}
-              dataSet={religions}
-              inputContainerStyle={{
-                backgroundColor: '#fff',
-                borderRadius: 5,
-                width: '100%',
-                borderColor: '#000',
-                borderWidth: 1,
-              }}
-              
-              textInputProps={{
-                placeholder: 'Select Religion',
-                autoCorrect: false,
-                autoCapitalize: 'none',
-                style: {
-                  borderRadius: 25,
-                  backgroundColor: '#fff',
-                  color: '#000',
-                  paddingLeft: 18,
-                },
-              }}
-            />
-          </View>
+          {
+           religions?.length > 0 && !isLoading && !isLoading2  && <View style={styles.input}>
+             <AutocompleteDropdown
+               clearOnFocus={false}
+               closeOnBlur={true}
+               placeholder="Select Religion"
+               initialValue={{
+                 id: religionId
+               }}
+               onSelectItem={(item) => {
+                 setSelectedItem(item);
+                 handleInputChange('religion', item)}}
+               dataSet={religions}
+               inputContainerStyle={{
+                 backgroundColor: '#fff',
+                 borderRadius: 5,
+                 width: '100%',
+                 borderColor: '#000',
+                 borderWidth: 1,
+               }}
+               
+               textInputProps={{
+                 placeholder: 'Select Religion',
+                 autoCorrect: false,
+                 autoCapitalize: 'none',
+                 style: {
+                   borderRadius: 25,
+                   backgroundColor: '#fff',
+                   color: '#000',
+                   paddingLeft: 18,
+                 },
+               }}
+             />
+           </View>
+          }
           <FieldHelperText error={errors.religion} />
 
 
