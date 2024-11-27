@@ -5,7 +5,12 @@ import QuickSearch from '../../component/QuickSearch'
 const QucikSearch = () => {
   return (
 
-    <View>
+    <View
+    style={{
+      backgroundColor: "#fff",
+      flex: 1,
+    }}
+    >
       <QuickSearch />
     </View>
   )
