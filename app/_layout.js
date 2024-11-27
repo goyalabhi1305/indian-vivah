@@ -3,11 +3,21 @@ import GlobalProvider from '../context/GlobalProvider';
 import { useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TouchableOpacity } from 'react-native';
-import { Icon } from 'react-native-paper';
+import { DefaultTheme, Icon, PaperProvider } from 'react-native-paper';
 import ToastManager from 'toastify-react-native';
 import Toast from 'react-native-toast-message';
 
 SplashScreen.preventAutoHideAsync();
+
+const theme = {
+	...DefaultTheme,
+	roundness: 10,
+	colors: {
+		...DefaultTheme.colors,
+		primary: '#ff4f4f',
+		secondaryContainer: '#FFF3F4',
+	},
+};
 
 export default function RootLayout() {
 
@@ -19,7 +29,8 @@ export default function RootLayout() {
     const fetchData = async () => {
 
       const user = await AsyncStorage.getItem("userdetails");
-      const showOnboarding = await AsyncStorage.getItem("showOnboarding");
+      let showOnboarding = await AsyncStorage.getItem("showOnboarding");
+      showOnboarding = JSON.parse(showOnboarding || 'true');
       console.log("showOnboarding",showOnboarding);
       if (user) {
         if (!showOnboarding) {
@@ -40,13 +51,13 @@ export default function RootLayout() {
 
   return (
     <GlobalProvider>
-      <ToastManager/>
+      	<PaperProvider theme={theme}>
+      {/* <ToastManager/> */}
       <Toast />
       <Stack
         screenOptions={{
           headerStyle: {
-            backgroundColor: '#663399',
-
+            backgroundColor: '#ff4f4f',
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
@@ -170,6 +181,8 @@ export default function RootLayout() {
 
         
       </Stack>
+
+      </PaperProvider>
 
     </GlobalProvider>
   );
