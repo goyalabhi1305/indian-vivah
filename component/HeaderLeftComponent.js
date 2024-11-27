@@ -86,9 +86,17 @@ const HeaderLeftComponent = () => {
                         onPress={() => {
                             AsyncStorage.removeItem('token');
                             AsyncStorage.removeItem('userdetails');
+                            AsyncStorage.removeItem('showOnboarding');
                             router.replace('(auth)/SignIn');
                         }
                         }
+
+                        style={{
+                            padding: 10,
+                            borderBottomWidth: 1,
+                            borderBottomColor: '#ddd',
+                            marginTop: 50
+                        }}
                         
                     >
                         <Text>Logout</Text>
