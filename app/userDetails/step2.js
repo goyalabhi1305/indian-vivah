@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { TextInput, Button } from 'react-native-paper';
@@ -44,6 +44,7 @@ const Step2 = () => {
     loading: false,
   });
 
+  
   const [config2, setConfig2] = useState({
     address: {
       streetone: '',
@@ -55,6 +56,55 @@ const Step2 = () => {
     loading: false,
   }
 );
+
+  
+  const {data:formFetchedData, isLoading} = useSWR('getOnboardData');
+
+  useEffect(() => {
+    if(formFetchedData){
+      setFormData({
+        maritalStatus: formFetchedData.maritalStatus,
+        horoscope: formFetchedData.horoscope,
+        currentAddress: {
+          address: formFetchedData.currentLocation?.address,
+          pincode: formFetchedData.currentLocation?.pincode,
+          city: formFetchedData.currentLocation?.city,
+          state: formFetchedData.currentLocation?.state,
+          country: formFetchedData.currentLocation?.country,
+        },
+        permanentAddress: {
+          address: formFetchedData.nativeLocation?.address,
+          pincode: formFetchedData.nativeLocation?.pincode,
+          city: formFetchedData.nativeLocation?.city,
+          state: formFetchedData.nativeLocation?.state,
+          country: formFetchedData.nativeLocation?.country,
+        },
+      })
+
+      setConfig((prevState) => ({
+        ...prevState,
+        address: {
+          ...prevState.address,
+          city: formFetchedData?.currentLocation?.cityFull,
+          state: formFetchedData?.currentLocation?.stateFull,
+          country: formFetchedData?.currentLocation?.countryFull,
+        },
+      }));
+
+      setConfig2((prevState) => ({
+        ...prevState,
+        address: {
+          ...prevState.address,
+          city: formFetchedData.nativeLocation?.cityFull,
+          state: formFetchedData.nativeLocation?.stateFull,
+          country: formFetchedData.nativeLocation?.countryFull,
+        },
+      }));
+
+      
+    }
+  }, [formFetchedData])
+
 
 
   const countries_list = CountryStsLst.getAllCountries();
@@ -215,7 +265,10 @@ const Step2 = () => {
           "state":config.address.state.name,
           "city":config.address.city.name,
           "address":formData.currentAddress.address,
-          "pincode":formData.currentAddress.pincode
+          "pincode":formData.currentAddress.pincode,
+          "countryFull":config.address.country,
+          "stateFull":config.address.state,
+          "cityFull":config.address.city,
         },
 
         nativeLocation:{
@@ -223,7 +276,10 @@ const Step2 = () => {
           "state":config2.address.state.name,
           "city":config2.address.city.name,
           "address":formData.permanentAddress.address,
-          "pincode":formData.permanentAddress.pincode
+          "pincode":formData.permanentAddress.pincode,
+          "countryFull":config2.address.country,
+          "stateFull":config2.address.state,
+          "cityFull":config2.address.city,
         },
 
         maritalStatus: formData.maritalStatus,
@@ -301,6 +357,7 @@ const Step2 = () => {
     return Object.keys(newErrors).length === 0;
   };
   
+  console.log("config",config);
 
   return (
     <ScrollView style={styles.container}>
@@ -561,7 +618,6 @@ const styles = StyleSheet.create({
   button: {
     width: '100%',
     marginTop: 30,
-    backgroundColor: '#6200ee',
     marginBottom: 50
   },
 });
