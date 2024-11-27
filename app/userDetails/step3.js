@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { AutocompleteDropdown, AutocompleteDropdownContextProvider } from 'react-native-autocomplete-dropdown';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -8,6 +8,7 @@ import { TextInput, Button, Menu, Provider } from 'react-native-paper';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { UserOnBoard } from '../../services/endpoint';
 import FieldHelperText from '../../component/FieldHelperText';
+import useSWR from 'swr';
 //...
 
 const Step3 = () => {
@@ -29,6 +30,29 @@ const Step3 = () => {
         bio: '',
         weight: '',
     });
+
+  const {data:formFetchedData, isLoading} = useSWR('getOnboardData');
+
+
+  useEffect(() => {
+    if(formFetchedData){
+        setFormData({
+            education: formFetchedData.education,
+            aboutCareer: formFetchedData.aboutCareer,
+            otherThings: formFetchedData.otherThings,
+            income: formFetchedData?.salary ? JSON.stringify(formFetchedData.salary || '') : null,
+            company: formFetchedData?.occupation?.company,
+            officeLocation: formFetchedData?.occupation?.officeLocation,
+            position: formFetchedData?.occupation?.position,
+            linkedinProfile: formFetchedData.linkedinProfile,
+            height: formFetchedData.height,
+            diet: formFetchedData.diet,
+            complexion: formFetchedData.complexion,
+            bio: formFetchedData.bio,
+            weight: formFetchedData?.weight ? JSON.stringify(formFetchedData.weight || '') : null
+            })
+    }
+    }, [formFetchedData]);
 
     const [loading, setLoading] = useState(false);
     const [openHeight, setOpenHeight] = useState(false);
@@ -79,14 +103,13 @@ const Step3 = () => {
                 education: formData.education,
                 aboutCareer: formData.aboutCareer,
                 otherThings: formData.otherThings,
-                income: formData.income,
+                salary: formData.income,
                 occupation: {
                     company: formData.company,
                     officeLocation: formData.officeLocation,
                     position: formData.position,
                 },
-                // height: formData.height?.id ,
-                height:"180" ,
+                height: 180 ,
                 diet: formData.diet,
                 complexion: formData.complexion,
                 bio: formData.bio,
@@ -175,6 +198,7 @@ const Step3 = () => {
         return Object.keys(errors).length === 0;
       };
       
+      console.log('Form Data:', formData);
 
     return (
         <AutocompleteDropdownContextProvider headerOffset={headerHeight} >
@@ -217,7 +241,7 @@ const Step3 = () => {
                         <FieldHelperText error={errors.height} />
 
                         <TextInput
-                            label="Education"
+                            label="Weight"
                             mode="outlined"
                             value={formData.weight}
                             onChangeText={(text) => handleInputChange('weight', text)}
@@ -432,7 +456,7 @@ const styles = StyleSheet.create({
     },
     button: {
         marginTop: 10,
-        backgroundColor: '#6200ee',
+        backgroundColor: '#ff4f4f',
     },
 });
 
