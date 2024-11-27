@@ -23,7 +23,7 @@ export default function MyComponent() {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#663399',
+        tabBarActiveTintColor: '#ff4f4f',
         tabBarInactiveTintColor: '#000',
       }}
       tabBar={({ navigation, state, descriptors, insets }) => (
@@ -32,7 +32,9 @@ export default function MyComponent() {
           safeAreaInsets={insets}
 
           // make z-index low
-          style={{ elevation: 0, zIndex: 0 }}
+          style={{ elevation: 0, zIndex: 0 ,
+            backgroundColor:'#fff',
+          }}
 
           onTabPress={({ route, preventDefault }) => {
             const event = navigation.emit({
@@ -79,7 +81,7 @@ export default function MyComponent() {
           tabBarLabel: 'Home',
           headerShown: true,
           headerStyle: {
-            backgroundColor: '#663399',
+            backgroundColor: '#ff4f4f',
             height: 60
           },
 
@@ -111,7 +113,7 @@ export default function MyComponent() {
           tabBarLabel: 'Message',
           headerShown: true,
           headerStyle: {
-            backgroundColor: '#663399',
+            backgroundColor: '#ff4f4f',
             height: 60
           },
           headerTintColor: '#fff',
@@ -138,7 +140,7 @@ export default function MyComponent() {
           tabBarLabel: 'Search',
           headerShown: true,
           headerStyle: {
-            backgroundColor: '#663399',
+            backgroundColor: '#ff4f4f',
             height: 60
           },
           headerTintColor: '#fff',
@@ -166,7 +168,7 @@ export default function MyComponent() {
           tabBarLabel: 'Activity',
           headerShown: true,
           headerStyle: {
-            backgroundColor: '#663399',
+            backgroundColor: '#ff4f4f',
             height: 60
           },
           headerTintColor: '#fff',
@@ -193,7 +195,7 @@ export default function MyComponent() {
           tabBarLabel: 'My Profile',
           headerShown: true,
           headerStyle: {
-            backgroundColor: '#663399',
+            backgroundColor: '#ff4f4f',
             height: 60
           },
           headerTintColor: '#fff',
@@ -220,7 +222,7 @@ export default function MyComponent() {
           tabBarLabel: 'Premium',
           headerShown: true,
           headerStyle: {
-            backgroundColor: '#663399',
+            backgroundColor: '#ff4f4f',
             height: 60
           },
           headerTintColor: '#fff',
@@ -298,5 +300,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#fff',
   },
 });
