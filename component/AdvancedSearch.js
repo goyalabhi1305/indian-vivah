@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     flex: 1,
     // backgroundColor: '#fff',
     // padding: 16,
-    backgroundColor: 'red',
+    backgroundColor: '#fff',
   },
   header: {
     fontSize: 24,
