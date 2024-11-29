@@ -380,6 +380,9 @@ const Step2 = () => {
                 maritalStatus: '',
               }));
             }}
+            style={{
+              backgroundColor: '#fff3f4',
+            }}
             setItems={setMaritalStatusItems}
             placeholder="Select Marital Status"
           />
@@ -585,6 +588,7 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: 30,
     paddingHorizontal: 20,
+    backgroundColor: '#fff3f4',
   },
   headerText: {
     fontSize: 20,
@@ -604,6 +608,7 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     marginTop: 15,
+    backgroundColor: '#fff3f4',
 
   },
   row: {
