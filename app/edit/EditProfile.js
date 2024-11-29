@@ -9,7 +9,7 @@ const EditProfile = () => {
 
   return (
     <View style={styles.container}>
-      <Text variant="titleMedium" style={styles.title}>Edit</Text>
+      {/* <Text variant="titleMedium" style={styles.title}>Edit</Text> */}
       <List.Section>
         <TouchableRipple
           onPress={() => router.push('edit/BasicInfo')}
@@ -91,11 +91,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#fff3f4',
   },
   title: {
     marginBottom: 16,
     fontWeight: 'bold',
+    fontSize: 24,
   },
   listItem: {
     // backgroundColor: '#fff', // Optional: Add background to match List.Item style
