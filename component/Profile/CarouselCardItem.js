@@ -9,18 +9,14 @@ export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.8)
 // const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.75);
 
 const CarouselCardItem = ({ item, index }) => {
+  console.log(item)
   return (
     <View style={styles.container} key={index}>
       <Image
-        source={{ uri: item.imgUrl }}
+        source={{ uri: item.pic }}
         style={styles.image}
+
       />
-      <Text style={styles.header}>{item.title}</Text>
-      <Text style={styles.body}
-       
-        numberOfLines={7}
-        ellipsizeMode="tail"
-      >{item.body}</Text>
     </View>
   )
 }
@@ -31,8 +27,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 8,
     width: ITEM_WIDTH,
-    paddingBottom: 40,
     shadowColor: "#000",
+    borderRadius: 8,
     // shadowOffset: {
     //   width: 0,
     //   height: 3,
@@ -44,8 +40,10 @@ const styles = StyleSheet.create({
   image: {
     width: ITEM_WIDTH,
     height: 300,
+    objectFit: "cover",
     width: "100%",
-    borderTopLeftRadius: 8,
+    borderRadius: 8,
+    backgroundColor: 'white',
   },
   header: {
     color: "#222",
