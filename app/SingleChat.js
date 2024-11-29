@@ -12,9 +12,11 @@ import {
 	TouchableWithoutFeedback,
 	Keyboard,
 } from 'react-native';
-import { TextInput, IconButton } from 'react-native-paper';
-import { useNavigation, useRouter } from 'expo-router';
+import { TextInput, IconButton, ActivityIndicator } from 'react-native-paper';
+import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
 import images from '../constants/images';
+import { GetMessages, GetProfileDetailUser, SendMessage } from '../services/endpoint';
+import useSWR from 'swr';
 
 const HeaderTitle = ({ firstname, lastname, profilephoto, handleRedirectToPortfolio }) => (
 	<TouchableOpacity onPress={handleRedirectToPortfolio} style={styles.headerContainer}>
@@ -30,61 +32,107 @@ const HeaderTitle = ({ firstname, lastname, profilephoto, handleRedirectToPortfo
 );
 
 const SingleChat = () => {
+	const params = useLocalSearchParams();
+
 	const navigation = useNavigation();
 	const router = useRouter();
 	const scrollViewRef = useRef();
+	// {
+	// 	content: 'Hello! How can I help you today?',
+	// 	position: 'left',
+	// 	time: new Date().toISOString(),
+	// },
+	// {
+	// 	content: 'I have a question about my order.',
+	// 	position: 'right',
+	// 	time: new Date().toISOString(),
+	// },
 	const [messages, setMessages] = useState([
-		{
-			content: 'Hello! How can I help you today?',
-			position: 'left',
-			time: new Date().toISOString(),
-		},
-		{
-			content: 'I have a question about my order.',
-			position: 'right',
-			time: new Date().toISOString(),
-		},
+		
 	]);
 	const [text, setText] = useState('');
+	const [loading, setLoading] = useState(true);
+	const [loadingMore, setLoadingMore] = useState(false);
+	const [endReached, setEndReached] = useState(false);
+
+
+	const fetcher2 = async () => {
+		const response = await GetProfileDetailUser(params.recevierId)
+		return response.data?.data
+	  }
+	
+	  const { data, isLoading, error } = useSWR(
+		params.recevierId ? `fetchUserProfileDetails${params.recevierId}` : null,
+		fetcher2)
 
 	const handleRedirectToPortfolio = () => {
-		router.push('/UserProfile');
+		router.push('/UserProfile/' + params.recevierId);
 	};
 
+	console.log("Data", data);
 	useEffect(() => {
 		navigation.setOptions({
 			headerTitle: () => (
 				<HeaderTitle
-					firstname="John"
-					lastname="Doe"
-					profilephoto={null}
+					firstname={data?.firstName || "Loading..."}
+					lastname={data?.lastName || ' '}
+					profilephoto={data?.avatar}
 					handleRedirectToPortfolio={handleRedirectToPortfolio}
-                    
-                    headerTintColor='#ffffff'
 
-                    // make the header text white and bold
-                    headerTitleStyle={{
-                        fontWeight: 'bold',
-                        color: '#fff',
-                    }}
+					headerTintColor='#ffffff'
+
+					// make the header text white and bold
+					headerTitleStyle={{
+						fontWeight: 'bold',
+						color: '#fff',
+					}}
 				/>
 			),
 		});
-	}, []);
+	}, [data]);
 
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		if (text.trim() === '') return;
 
 		const newMessage = {
-			content: text,
-			position: 'right',
-			time: new Date().toISOString(),
+			message: text,
+			receiver: params.recevierId,
+			createdAt: new Date().toISOString(),
 		};
-
 		setMessages((prevMessages) => [...prevMessages, newMessage]);
+
 		setText('');
 		scrollViewRef.current.scrollToEnd({ animated: true });
+
+		const payload = {
+			receiverId: params.recevierId,
+			message: text,
+		}
+		await SendMessage(payload);
+
 	};
+
+
+	const fetcher = async () => {
+		try{
+			const response = await GetMessages(params.recevierId);
+			// setData(response.data);
+			setMessages([...response.data.data, ...messages]);
+			setLoading(false);
+			// setLoadingMore(false);
+			// if(messages.length + 15 > response.data.msg_cnt){
+			// 	setEndReached(true);
+			// }
+
+		}catch(error){
+			console.error("Error", error);
+		}
+	}
+
+	useEffect(() => {
+		fetcher();
+	}, []);
+
 
 	return (
 		<SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -99,9 +147,17 @@ const SingleChat = () => {
 						contentContainerStyle={styles.contentContainer}
 						onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
 					>
+
+						{loading && (
+							<ActivityIndicator
+								size='large'
+								style={styles.loader}
+							/>
+						)}
+
 						{messages.map((message, index) => {
-							const isSent = message.position === 'right';
-							const time = new Date(message.time);
+							const isSent = message.receiver == params.recevierId;
+							const time = new Date(message.createdAt);
 							const relativeTime = time.toLocaleTimeString('en-US', {
 								hour: 'numeric',
 								minute: 'numeric',
@@ -121,7 +177,7 @@ const SingleChat = () => {
 											{ backgroundColor: isSent ? '#0171e3' : '#dddada' },
 										]}>
 										<Text style={{ color: isSent ? 'white' : 'black', fontSize: 15 }}>
-											{message.content}
+											{message.message}
 										</Text>
 										<Text
 											style={{
@@ -208,8 +264,17 @@ const styles = StyleSheet.create({
 	},
 	headerText: {
 		fontSize: 18,
-        color: '#fff',
+		color: '#fff',
 		fontWeight: 'bold',
+	},
+	loader: {
+		position: 'absolute',
+		top: 0,
+		left: 0,
+		right: 0,
+		bottom: 0,
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 });
 
