@@ -241,6 +241,11 @@ const Step1 = () => {
               open={openGender}
               value={formData.gender}
               items={genderItems}
+              style={{
+                backgroundColor: '#fff3f4',
+                marginBottom: 5,
+                marginTop: 10
+              }}
 
               setOpen={setOpenGender}
               setValue={(callback) => {
@@ -285,11 +290,12 @@ const Step1 = () => {
                  handleInputChange('religion', item)}}
                dataSet={religions}
                inputContainerStyle={{
-                 backgroundColor: '#fff',
-                 borderRadius: 5,
+                 backgroundColor: '#fff3f4',
+                 borderRadius: 10,
                  width: '100%',
                  borderColor: '#000',
                  borderWidth: 1,
+                 marginTop: 10,
                }}
                
                textInputProps={{
@@ -298,7 +304,7 @@ const Step1 = () => {
                  autoCapitalize: 'none',
                  style: {
                    borderRadius: 25,
-                   backgroundColor: '#fff',
+                   backgroundColor: '#fff3f4',
                    color: '#000',
                    paddingLeft: 18,
                  },
@@ -315,11 +321,12 @@ const Step1 = () => {
               closeOnBlur={true}
               placeholder="Select Caste"
               inputContainerStyle={{
-                backgroundColor: '#fff',
-                borderRadius: 5,
+                backgroundColor: '#fff3f4',
+                borderRadius: 10,
                 width: '100%',
                 borderColor: '#000',
                 borderWidth: 1,
+                marginTop: 10,
               }}
               
               textInputProps={{
@@ -328,7 +335,7 @@ const Step1 = () => {
                 autoCapitalize: 'none',
                 style: {
                   borderRadius: 25,
-                  backgroundColor: '#fff',
+                  backgroundColor: '#fff3f4',
                   color: '#000',
                   paddingLeft: 18,
                 },
@@ -375,6 +382,11 @@ const Step1 = () => {
                 handleInputChange('bloodGroup', value);
                 console.log('Selected Blood Group:', value);
               }}
+              style={{
+                backgroundColor: '#fff3f4',
+                marginBottom: 10,
+                marginTop: 10
+              }}
               setItems={setBloodGroupItems}
               placeholder="Select Blood Group"
             />
@@ -399,8 +411,9 @@ const Step1 = () => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 30,
+    paddingTop: 30,
     paddingHorizontal: 20,
+    backgroundColor: '#fff3f4',
   },
   headerText: {
     fontSize: 20,
@@ -414,6 +427,7 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     marginTop: 10,
+    backgroundColor: '#fff3f4',
     // marginBottom: 10,
   },
   button: {
