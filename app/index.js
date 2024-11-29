@@ -33,7 +33,7 @@ export default function MyComponent() {
 
           // make z-index low
           style={{ elevation: 0, zIndex: 0 ,
-            backgroundColor:'#fff',
+            backgroundColor:'#FFF3F4',
           }}
 
           onTabPress={({ route, preventDefault }) => {
@@ -300,6 +300,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#FFF3F4',
   },
 });
