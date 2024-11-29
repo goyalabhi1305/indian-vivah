@@ -1,118 +1,86 @@
-import React from "react";
-import { FlatList, View, StyleSheet } from "react-native";
-import { Appbar, Button, Card, Avatar, Text, Drawer } from "react-native-paper";
+import React, { useEffect, useCallback } from "react";
+import { FlatList, View, StyleSheet, RefreshControl } from "react-native";
+import { ActivityIndicator, Avatar, Button, Text } from "react-native-paper";
 import ProfileCard from "./Card/ProfileCard";
-
-const DATA = [
-    {
-        id: "1",
-        name: "John Doe",
-        location: "New York",
-        education: "Masters",
-        age: 30,
-        weight: "70kg",
-        height: "5'9\"",
-        status: "Single",
-    },
-    {
-        id: "2",
-        name: "Jane Smith",
-        location: "California",
-        education: "PhD",
-        age: 28,
-        weight: "60kg",
-        height: "5'6\"",
-        status: "Single",
-    },
-    {
-        id: "3",
-        name: "Alice Johnson",
-        location: "Texas",
-        education: "Bachelors",
-        age: 32,
-        weight: "65kg",
-        height: "5'7\"",
-        status: "Married",
-    },
-    {
-        id: "4",
-        name: "Bob Brown",
-        location: "Florida",
-        education: "High School",
-        age: 25,
-        weight: "75kg",
-        height: "6'0\"",
-        status: "Single",
-    },
-    {
-        id: "5",
-        name: "Charlie Davis",
-        location: "Washington",
-        education: "Masters",
-        age: 29,
-        weight: "80kg",
-        height: "5'10\"",
-        status: "Married",
-    },
-    {
-        id: "6",
-        name: "David Lee",
-        location: "Oregon",
-        education: "Bachelors",
-        age: 31,
-        weight: "70kg",
-        height: "5'8\"",
-        status: "Single",
-    },
-    {
-        id: "7",
-        name: "Eve Wilson",
-        location: "Arizona",
-        education: "High School",
-        age: 27,
-        weight: "55kg",
-        height: "5'5\"",
-        status: "Single",
-    },
-    {
-        id: "8",
-        name: "Frank Miller",
-        location: "Nevada",
-        education: "PhD",
-        age: 33,
-        weight: "90kg",
-        height: "6'2\"",
-        status: "Married",
-    },
-    {
-        id: "9",
-        name: "Grace Moore",
-        location: "Colorado",
-        education: "Masters",
-        age: 30,
-        weight: "65kg",
-        height: "5'7\"",
-        status: "Single",
-    },
-    {
-        id: "10",
-        name: "Harry Harris",
-        location: "Utah",
-        education: "Bachelors",
-        age: 26,
-        weight: "75kg",
-        height: "5'11\"",
-        status: "Single",
-    }
-];
+import { GetProfileDetailUser } from "../services/endpoint";
+import { GetAllUsers } from "../services/calls/GetAllUsers.api";
+import useSWR from "swr";
 
 const HomeComponent = () => {
+    const [config, setConfig] = React.useState({ refreshing: false });
+    const [loadMoreLoading, setLoadMoreLoading] = React.useState(false);
+    const [usersData, setUsersData] = React.useState([]);
+    const [userMeta, setUserMeta] = React.useState({});
+    const [loading, setLoading] = React.useState(true);
+    const [isEndReached, setIsEndReached] = React.useState(false);
+    const [page, setPage] = React.useState(1);
+
+    const fetcher = async () => {
+        const response = await GetProfileDetailUser()
+        return response.data?.data
+    }
+
+    const { data, isLoading, error } = useSWR('fetchUserProfileDetails', fetcher)
+
+    const fetchData = useCallback(async (currentPage) => {
+        try {
+            const response = await GetAllUsers(currentPage);
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching users:", error);
+            return { data: [], meta: {} };
+        }
+    }, []);
+
+    useEffect(() => {
+        const fetchInitialData = async () => {
+            const response = await fetchData(1);
+            setUsersData(response.data);
+            setUserMeta(response.meta);
+            setIsEndReached(response.meta.totalUsers - 1 <= response.data.length);
+            
+            setLoading(false);
+        };
+
+        fetchInitialData();
+    }, [fetchData]);
+
+    const handleLoadMore = async () => {
+        if (loading || loadMoreLoading || isEndReached) return;
+
+        setLoadMoreLoading(true);
+        const response = await fetchData(page + 1);
+
+        setUsersData((prev) => [...prev, ...response.data]);
+        setUserMeta(response.meta);
+        setIsEndReached(response.meta.totalUsers <= usersData.length + response.data.length);
+        setPage((prev) => prev + 1);
+        setLoadMoreLoading(false);
+    };
+
+    const handleRefresh = async () => {
+        setConfig({ ...config, refreshing: true });
+        const response = await fetchData(1);
+
+        setUsersData(response.data);
+        setUserMeta(response.meta);
+        setIsEndReached(response.meta.totalUsers <= response.data.length);
+        setPage(1);
+        setConfig({ ...config, refreshing: false });
+    };
+
     const renderHeader = () => (
         <View style={styles.profileContainer}>
-            <Avatar.Text size={100} label="U" />
+            <Avatar.Image size={100} source={
+                {
+                    uri: data?.avatar
+                }
+            } />
             <View
                 style={{
                     display: "flex",
+                    marginLeft: 10,
+                    marginTop: 10,
                 }}
             >
                 <View style={styles.profileInfo}>
@@ -121,8 +89,10 @@ const HomeComponent = () => {
                             fontSize: 24,
                             fontWeight: "bold",
                         }}
-                    >Username</Text>
-
+                    >
+                        {data?.firstName + " " + data?.lastName}
+                    </Text>
+                    <Text> ID: {data?.shortId}</Text>
                 </View>
                 <View
                     style={{
@@ -145,20 +115,24 @@ const HomeComponent = () => {
         </View>
     );
 
-    const renderItem = ({ item }) => (
-        <ProfileCard item={item} />
-    );
+    const renderItem = useCallback(({ item }) => <ProfileCard item={item} />, []);
+
+    const renderFooter = () =>
+        loadMoreLoading ? <ActivityIndicator animating size={22} style={{ marginVertical: 10 }} /> : null;
+
+    if (loading || isLoading) {
+        return (
+            <View style={styles.centered}>
+                <ActivityIndicator size="large" />
+            </View>
+        );
+    }
 
     return (
         <View style={styles.container}>
-           
-            {/* <Appbar.Header>
-        <Appbar.Content title="Home" />
-        <Appbar.Action icon="bell" onPress={() => {}} />
-      </Appbar.Header> */}
             <FlatList
-                data={DATA}
-                keyExtractor={(item) => item.id}
+                data={usersData}
+                keyExtractor={(item) => item._id.toString()}
                 ListHeaderComponent={() => (
                     <>
                         {renderHeader()}
@@ -166,16 +140,17 @@ const HomeComponent = () => {
                     </>
                 )}
                 renderItem={renderItem}
+                ListFooterComponent={renderFooter}
+                onEndReached={handleLoadMore}
+                onEndReachedThreshold={0.5}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={config.refreshing}
+                        onRefresh={handleRefresh}
+                    />
+                }
                 contentContainerStyle={styles.list}
-                showsVerticalScrollIndicator={false}
             />
-            {/* <Appbar style={styles.bottomBar}>
-        <Appbar.Action icon="home" onPress={() => {}} />
-        <Appbar.Action icon="message" onPress={() => {}} />
-        <Appbar.Action icon="magnify" onPress={() => {}} />
-        <Appbar.Action icon="chart-bar" onPress={() => {}} />
-        <Appbar.Action icon="crown" onPress={() => {}} />
-      </Appbar> */}
         </View>
     );
 };
@@ -185,51 +160,36 @@ const styles = StyleSheet.create({
         flex: 1,
         width: "100%",
     },
+    centered: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
     profileContainer: {
         flexDirection: "row",
         alignItems: "center",
         padding: 16,
-        backgroundColor: "#fff",
-        width: "100%",
-        display: "flex",
-        gap: 16,
+        backgroundColor: "#FFF3F4",
     },
     profileInfo: {
         flex: 1,
         marginLeft: 16,
-        color: "black",
-        display: "flex",
-        flexDirection: "column",
-
+    },
+    actionButtons: {
+        flexDirection: "row",
+        marginVertical: 16,
     },
     button: {
         marginHorizontal: 4,
+    },
+    list: {
+        paddingBottom: 80, // Space for the bottom bar
     },
     sectionTitle: {
         fontSize: 18,
         fontWeight: "bold",
         marginVertical: 8,
         marginLeft: 16,
-    },
-    card: {
-        marginHorizontal: 16,
-        marginVertical: 8,
-    },
-    heartIcon: {
-        fontSize: 20,
-        color: "red",
-        marginRight: 16,
-    },
-    list: {
-        paddingBottom: 80, // Space for the bottom bar
-    },
-    bottomBar: {
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        right: 0,
-        justifyContent: "space-around",
-        backgroundColor: "white",
     },
 });
 
