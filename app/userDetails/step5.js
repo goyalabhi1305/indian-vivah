@@ -59,6 +59,8 @@ const Step5 = () => {
         });
       });
 
+      formData.append('isOnboardingDone', true);
+
       const response = await UserOnBoardFormData(formData);
 
       await AsyncStorage.setItem('userdetails', JSON.stringify(response.data));
@@ -132,6 +134,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
     marginTop: 30,
+    backgroundColor: '#fff3f4',
   },
   headerText: {
     fontSize: 20,
@@ -142,10 +145,11 @@ const styles = StyleSheet.create({
   placeholder: {
     width: '100%',
     height: 200,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
+    borderRadius: 20,
   },
   grid: {
     marginBottom: 20,
