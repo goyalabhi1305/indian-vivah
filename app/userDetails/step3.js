@@ -109,7 +109,7 @@ const Step3 = () => {
                     officeLocation: formData.officeLocation,
                     position: formData.position,
                 },
-                height: 180 ,
+                height: formData.height?.id,
                 diet: formData.diet,
                 complexion: formData.complexion,
                 bio: formData.bio,
@@ -217,8 +217,8 @@ const Step3 = () => {
                                 }}
                                 dataSet={heightItems}
                                 inputContainerStyle={{
-                                    backgroundColor: '#fff',
-                                    borderRadius: 5,
+                                    backgroundColor: '#fff3f4',
+                                    borderRadius: 10,
                                     width: '100%',
                                     borderColor: '#000',
                                     borderWidth: 1,
@@ -230,7 +230,7 @@ const Step3 = () => {
                                     autoCapitalize: 'none',
                                     style: {
                                         borderRadius: 25,
-                                        backgroundColor: '#fff',
+                                        backgroundColor: '#fff3f4',
                                         color: '#000',
                                         paddingLeft: 18,
                                     },
@@ -335,6 +335,10 @@ const Step3 = () => {
                                     console.log('Selected Gender:', value);
                                 }}
 
+                                style={{
+                                    backgroundColor: '#fff3f4',
+                                }}
+
                                 placeholder="Select Diet"
                             />
                         </View>
@@ -396,7 +400,8 @@ const Step3 = () => {
                             style={{
                                 minHeight: 120,
                                 marginTop: 15,
-                                backgroundColor: '#fff',
+                                backgroundColor: '#fff3f4',
+
                             }}
                         />
 
@@ -438,6 +443,7 @@ const styles = StyleSheet.create({
     container: {
         paddingTop: 30,
         paddingHorizontal: 20,
+        backgroundColor: '#fff3f4',
 
     },
     headerText: {
@@ -453,6 +459,7 @@ const styles = StyleSheet.create({
     input: {
         width: '100%',
         marginTop: 15,
+        backgroundColor: '#fff3f4',
     },
     button: {
         marginTop: 10,
