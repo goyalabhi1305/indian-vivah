@@ -15,7 +15,8 @@ const theme = {
 	colors: {
 		...DefaultTheme.colors,
 		primary: '#ff4f4f',
-		secondaryContainer: '#FFF3F4',
+		secondaryContainer: '#f5c6ca',
+		// secondaryContainer: '#FFF3F4',
 	},
 };
 
@@ -107,6 +108,14 @@ export default function RootLayout() {
         <Stack.Screen name="Notification" />
 
         <Stack.Screen name="UserProfile" />
+
+        <Stack.Screen name="UserProfile/[id]"
+          options={{
+            headerTitle: 'Profile',
+            headerShown: true,
+          }}
+        />
+
 
         <Stack.Screen name="SingleChat" />
 
