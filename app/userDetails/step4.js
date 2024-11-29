@@ -375,6 +375,10 @@ const Step3 = () => {
                         }}
                         placeholder="Select Manglik Status"
 
+                        style={{
+                            backgroundColor: '#fff3f4',
+                        }}
+
                     />
 
                     <FieldHelperText error={errors.manglikStatus} />
@@ -483,7 +487,8 @@ const Step3 = () => {
                         items={employedInSectorArray}
                         setOpen={setOpenEmployedInSector}
                         style={{
-                            zIndex: 1
+                            zIndex: 1,
+                            backgroundColor: '#fff3f4',
                         }}
                         setValue={(callback) => {
                             const value = typeof callback === 'function' ? callback(formData.bloodGroup) : callback;
@@ -507,7 +512,8 @@ const Step3 = () => {
                         items={disabilityArray}
                         setOpen={setOpenDisability}
                         style={{
-                            zIndex: 1
+                            zIndex: 1,
+                            backgroundColor: '#fff3f4',
                         }}
                         setValue={(callback) => {
                             const value = typeof callback === 'function' ? callback(formData.bloodGroup) : callback;
@@ -525,7 +531,7 @@ const Step3 = () => {
 
 
 
-                <Text style={styles.subHeader}>Smoking Habits</Text>
+                <Text style={styles.subHeader}>Drinking Habits</Text>
 
                 <View style={styles.input}>
                     <DropDownPicker
@@ -534,7 +540,8 @@ const Step3 = () => {
                         items={drinkingHabitsArray}
                         setOpen={setOpenDrinkingHabits}
                         style={{
-                            zIndex: 1
+                            zIndex: 1,
+                            backgroundColor: '#fff3f4',
                         }}
                         setValue={(callback) => {
                             const value = typeof callback === 'function' ? callback(formData.bloodGroup) : callback;
@@ -543,6 +550,7 @@ const Step3 = () => {
                         }}
                         placeholder="Select Drinking Habits"
                         direction="BOTTOM"
+                  
                     />
 
                     <FieldHelperText error={errors.drinkingHabits} />
@@ -559,7 +567,8 @@ const Step3 = () => {
                         items={familyTypeArray}
                         setOpen={setOpenFamilyType}
                         style={{
-                            zIndex: 1
+                            zIndex: 1,
+                            backgroundColor: '#fff3f4',
                         }}
                         setValue={(callback) => {
                             const value = typeof callback === 'function' ? callback(formData.bloodGroup) : callback;
@@ -584,7 +593,8 @@ const Step3 = () => {
                         items={smokingArray}
                         setOpen={setOpenSmoking}
                         style={{
-                            zIndex: 1
+                            zIndex: 1,
+                            backgroundColor: '#fff3f4',
                         }}
                         setValue={(callback) => {
                             const value = typeof callback === 'function' ? callback(formData.bloodGroup) : callback;
@@ -606,7 +616,8 @@ const Step3 = () => {
                         items={contactShowArray}
                         setOpen={setOpenContactShow}
                         style={{
-                            zIndex: 1
+                            zIndex: 1,
+                            backgroundColor: '#fff3f4',
                         }}
                         setValue={(callback) => {
                             const value = typeof callback === 'function' ? callback(formData.bloodGroup) : callback;
@@ -642,6 +653,7 @@ const styles = StyleSheet.create({
     container: {
         paddingTop: 30,
         paddingHorizontal: 20,
+        backgroundColor: '#fff3f4',
     },
     headerText: {
         fontSize: 20,
@@ -663,6 +675,7 @@ const styles = StyleSheet.create({
     },
     input: {
         marginTop: 10,
+        backgroundColor: '#fff3f4',
     },
     formContainer: {
         width: '100%',
