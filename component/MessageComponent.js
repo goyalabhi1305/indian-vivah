@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import {
   View,
   ScrollView,
@@ -8,18 +8,21 @@ import {
   RefreshControl,
 } from 'react-native';
 import {
+  ActivityIndicator,
   Avatar,
   List,
   TouchableRipple,
 } from 'react-native-paper';
 import { useNavigation, useRouter } from 'expo-router';
+import { GetAllConversations } from '../services/endpoint';
+import useSWR from 'swr';
 
 const UserAvatar = ({ conversation }) => (
   <View style={{ position: 'relative' }}>
     <Avatar.Image
       size={48}
       style={{ backgroundColor: 'white' }}
-      source={{ uri: conversation?.another_userdata?.profilephoto || 'https://via.placeholder.com/150' }}
+      source={{ uri: conversation?.avatar || 'https://via.placeholder.com/150' }}
     />
   </View>
 );
@@ -27,65 +30,61 @@ const UserAvatar = ({ conversation }) => (
 const MessageComponent = () => {
   const navigation = useNavigation();
   const router = useRouter();
+  const [conversations, setConversations] = React.useState([]);
+  const [page, setPage] = React.useState(1);
+  const [loading, setLoading] = React.useState(true);
+  const [isEndReached, setIsEndReached] = React.useState(false);
 
-  const conversations = [
-    {
-      _id: '1',
-      another_userdata: { firstname: 'John', lastname: 'Doe', profilephoto: 'https://via.placeholder.com/150' },
-      lastmsg_cnt: { content: 'Hello, how can I help you?', timestamp: new Date().toString() },
-    },
-    {
-      _id: '2',
-      another_userdata: { firstname: 'Jane', lastname: 'Smith', profilephoto: 'https://via.placeholder.com/150' },
-      
-      lastmsg_cnt: { content: 'Are you interested in our latest offer?', timestamp: new Date().toString() },
-    },
-    {
-      _id: '3',
-      another_userdata: { firstname: 'Alice', lastname: 'Wonderland', profilephoto: 'https://via.placeholder.com/150' },
-      lastmsg_cnt: { content: 'I am looking for a new job. Can you help me?', timestamp: new Date().toString() },
-    },
-    {
-      _id: '4',
-      another_userdata: { firstname: 'Bob', lastname: 'Builder', profilephoto: 'https://via.placeholder.com/150' },
-      lastmsg_cnt: { content: 'Can you fix it?', timestamp: new Date().toString() },
-    },
-    {
-      _id: '5',
-      another_userdata: { firstname: 'Charlie', lastname: 'Chaplin', profilephoto: 'https://via.placeholder.com/150' },
-      lastmsg_cnt: { content: 'I am looking for a new job. Can you help me?', timestamp: new Date().toString() },
-    },
-    {
-      _id: '6',
-      another_userdata: { firstname: 'David', lastname: 'Doe', profilephoto: 'https://via.placeholder.com/150' },
-      lastmsg_cnt: { content: 'Hello, how can I help you?', timestamp: new Date().toString() },
-    },
-    {
-      _id: '7',
-      another_userdata: { firstname: 'Eve', lastname: 'Smith', profilephoto: 'https://via.placeholder.com/150' },
-      lastmsg_cnt: { content: 'Are you interested in our latest offer?', timestamp: new Date().toString() },
-    },
-    {
-      _id: '8',
-      another_userdata: { firstname: 'Frank', lastname: 'Wonderland', profilephoto: 'https://via.placeholder.com/150' },
-      lastmsg_cnt: { content: 'I am looking for a new job. Can you help me?', timestamp: new Date().toString() },
-    },
-    {
-      _id: '9',
-      another_userdata: { firstname: 'George', lastname: 'Builder', profilephoto: 'https://via.placeholder.com/150' },
-      lastmsg_cnt: { content: 'Can you fix it?', timestamp: new Date().toString() },
-    },
-    {
-      _id: '10',
-      another_userdata: { firstname: 'Helen', lastname: 'Chaplin', profilephoto: 'https://via.placeholder.com/150' },
-      lastmsg_cnt: { content: 'I am looking for a new job. Can you help me?', timestamp: new Date().toString() },
+  const fetcher = async () => {
+    const response = await GetAllConversations();
+    return response.data?.data;
+  };
+
+  const {data} = useSWR('fetchMessages', fetcher)
+
+
+  const fetchData = useCallback(async (currentPage) => {
+    try {
+      const response = await GetAllConversations(currentPage);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      return [];
     }
-  ];
+  }, []);
+
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      const response = await fetchData(1);
+      setConversations(response.data);
+      // setIsEndReached(response.meta.totalUsers - 1 <= response.data.length);
+      setLoading(false);
+    };
+
+    fetchInitialData();
+  }, [fetchData]);
+
+  useEffect(() => {
+
+    if(data) {
+      setConversations(data)
+    }
+
+  }, [data])
+
+  if (loading) {
+    return (
+        <View style={styles.centered}>
+            <ActivityIndicator size="large" />
+        </View>
+    );
+}
+
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}
-      showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
       >
         {conversations.length === 0 && (
           <View style={styles.noChatsContainer}>
@@ -95,29 +94,22 @@ const MessageComponent = () => {
         {conversations.map((conversation) => (
           <View key={conversation._id}>
             <TouchableRipple
-              onPress={() => router.push('/SingleChat', { conversationId: conversation._id })}
+              onPress={() =>  navigation.push('SingleChat', {
+                recevierId: conversation?.userId
+            })}
               rippleColor='rgba(0, 0, 0, .32)'
             >
               <List.Item
                 title={() => (
                   <View>
-                    <Text>{`${conversation?.another_userdata?.firstname || ""} ${conversation?.another_userdata?.lastname || ""}`.trim() || "Unknown User"}</Text>
-                    {conversation?.type === "brand" && (
-                      <Text style={{ fontSize: 12, color: 'gray' }}>
-                        {conversation?.BrandDetails?.name || "Brand"}
-                      </Text>
-                    )}
-                    {conversation?.type === "campaign" && (
-                      <Text style={{ fontSize: 12, color: 'gray' }}>
-                        {conversation?.camp_dtl?.title || "Campaign"}
-                      </Text>
-                    )}
+                    <Text>{`${conversation?.firstName || ""} ${conversation?.lastName || ""}`.trim() || "Unknown User"}</Text>
+                  
                   </View>
                 )}
-                description={conversation?.lastmsg_cnt?.content}
+                description={conversation?.lastMessage}
                 left={(props) => <UserAvatar conversation={conversation} />}
                 right={(props) => {
-                  const date = new Date(conversation?.lastmsg_cnt?.timestamp).toDateString();
+                  const date = new Date(conversation?.lastMessageTime).toDateString();
                   return (
                     <View style={{ justifyContent: 'center' }}>
                       <Text>{date}</Text>
@@ -153,6 +145,11 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     color: '#333',
   },
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+},
 });
 
 export default MessageComponent;
