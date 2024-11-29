@@ -26,9 +26,9 @@ const VerifyOtpCode = () => {
             console.log(code);
             await AsyncStorage.setItem('userdetails', JSON.stringify({ phone: phone }));
             await AsyncStorage.setItem('token', response.data.token);
-            await AsyncStorage.setItem('showOnboarding', (response.data.showOnboarding || true).toString());
+            await AsyncStorage.setItem('showOnboarding', (response.data.showOnboarding).toString());
 
-            if (response.data.showOnboarding || true) {
+            if (response.data.showOnboarding) {
                 router.replace('userDetails/step1');
             }else{
                 router.replace('/');
