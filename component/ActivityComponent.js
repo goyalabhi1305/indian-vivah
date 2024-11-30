@@ -2,6 +2,9 @@ import React from 'react';
 import { FlatList, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Card, Text, Button, Chip } from 'react-native-paper';
 import ProfileCard from './Card/ProfileCard';
+import { GetAcceptedRequest, ReceviedInterest, SentFriendRequest } from '../services/endpoint';
+import useSWR from 'swr';
+import { useRouter } from 'expo-router';
 
 const profiles = [
     {
@@ -93,10 +96,35 @@ const profiles = [
 ];
 
 const ActivityComponent = () => {
+    const router = useRouter();
 
     const [activeTab, setActiveTab] = React.useState('Interest');
 
+    const fetcher = async () => {
+        const response = await ReceviedInterest();
+        return response.data?.data;
+    }
+
+    const { data: received, isLoading: isLoading1 } = useSWR('interests', fetcher);
+
+    const fetcher2 = async () => {
+        const response = await GetAcceptedRequest();
+        return response.data?.data;
+    }
+
+    const { data: accepted, isLoading: isLoading3 } = useSWR('accepted', fetcher2);
+
+    const fetcher3 = async () => {
+        const response = await SentFriendRequest();
+        return response.data?.data;
+    }
+
+    const { data: sent, isLoading, isError } = useSWR('sent', fetcher3);
+
     const renderProfile = ({ item }) => (
+        <ProfileCard item={item?.receiver} />
+    );
+    const renderProfile2 = ({ item }) => (
         <ProfileCard item={item} />
     );
 
@@ -104,18 +132,29 @@ const ActivityComponent = () => {
         <View style={styles.container}>
             {/* Top Summary Section */}
             <View style={styles.summaryRow}>
+
                 <Card style={styles.summaryCard}>
-                    <Card.Content>
-                        <Text variant="titleMedium">Profile visit data</Text>
-                        <Text variant="bodySmall">0 profiles</Text>
-                    </Card.Content>
+                    <TouchableOpacity onPress={() => {
+                        router.push('ProfileVisit')
+                    }}
+                    >
+                        <Card.Content>
+                            <Text variant="titleMedium">Profile visit data</Text>
+                            <Text variant="bodySmall">0 profiles</Text>
+                        </Card.Content>
+                    </TouchableOpacity>
                 </Card>
-                <Card style={styles.summaryCard}>
-                    <Card.Content>
-                        <Text variant="titleMedium">Shortlisted</Text>
-                        <Text variant="bodySmall">0 profiles</Text>
-                    </Card.Content>
-                </Card>
+               
+                    <Card style={styles.summaryCard}>
+                    <TouchableOpacity onPress={() => {
+                    router.push('Shortlisted')
+                }}>
+                        <Card.Content>
+                            <Text variant="titleMedium">Shortlisted</Text>
+                            <Text variant="bodySmall">0 profiles</Text>
+                        </Card.Content>
+                </TouchableOpacity>
+                    </Card>
             </View>
 
             {/* Interest Section */}
@@ -131,9 +170,10 @@ const ActivityComponent = () => {
 
                 <TouchableOpacity onPress={() => setActiveTab('Interest')}>
                     <Chip
-                    mode={activeTab === 'Interest' ? 'contained' : 'outlined'}
-                    style={styles.chip}>
-                        Interest
+                        mode={activeTab === 'Interest' ? 'contained' : 'outlined'}
+                        style={styles.chip}>
+                        Received
+
                     </Chip>
                 </TouchableOpacity>
 
@@ -155,13 +195,35 @@ const ActivityComponent = () => {
             </View>
 
             {/* Profiles List */}
-            <FlatList
-                data={profiles}
-                renderItem={renderProfile}
-                keyExtractor={(item) => item.id}
-                contentContainerStyle={styles.profileList}
-                showsVerticalScrollIndicator={false}
-            />
+            {
+                activeTab === 'Interest' && <FlatList
+                    data={received}
+                    renderItem={renderProfile2}
+                    keyExtractor={(item) => item.id}
+                    contentContainerStyle={styles.profileList}
+                    showsVerticalScrollIndicator={false}
+                />
+            }
+
+            {
+                activeTab === 'Accepted' && <FlatList
+                    data={accepted}
+                    renderItem={renderProfile2}
+                    keyExtractor={(item) => item.id}
+                    contentContainerStyle={styles.profileList}
+                    showsVerticalScrollIndicator={false}
+                />
+            }
+
+            {
+                activeTab === 'Sent' && <FlatList
+                    data={sent}
+                    renderItem={renderProfile}
+                    keyExtractor={(item) => item._id}
+                    contentContainerStyle={styles.profileList}
+                    showsVerticalScrollIndicator={false}
+                />
+            }
         </View>
     );
 };
@@ -170,7 +232,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         // padding: 16,
-        backgroundColor: '#fff',
+        backgroundColor: '#fff3f4',
     },
     summaryRow: {
         flexDirection: 'row',
@@ -183,6 +245,9 @@ const styles = StyleSheet.create({
     summaryCard: {
         width: '48%',
         padding: 8,
+        borderRadius: 15,
+        padding: 10,
+        backgroundColor: '#fff',
     },
     interestSection: {
         flexDirection: 'row',
