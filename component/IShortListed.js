@@ -25,11 +25,30 @@ const IShortListed = () => {
     }
 
     const renderProfile = ({ item }) => (
-        <ProfileCard item={item?.interactedBy} />
+        <ProfileCard item={item?.user} />
     );
+
+    if (isLoading) {
+        return <View style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+        }}>
+            <ActivityIndicator size="large" />
+        </View>
+    }
 
     return (
         <View>
+
+            {
+                data.length === 0 && (
+                    <View style={styles.noChatsContainer}>
+                        <Text style={styles.noChatsText}>No chats found 🙃</Text>
+                    </View>
+                )
+            }
+
             <FlatList
                 data={data}
                 renderItem={renderProfile}
@@ -50,6 +69,16 @@ const styles = StyleSheet.create({
     profileList: {
         padding: 5
     },
+    noChatsContainer: {
+        alignItems: 'center',
+        marginTop: 300
+      },
+      noChatsText: {
+        fontWeight: '600',
+        fontSize: 24,
+        letterSpacing: 1,
+        color: '#333',
+      },
 })
 
 export default IShortListed
