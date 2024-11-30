@@ -1,6 +1,6 @@
 import React from 'react';
 import { FlatList, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { Card, Text, Button, Chip } from 'react-native-paper';
+import { Card, Text, Button, Chip, ActivityIndicator } from 'react-native-paper';
 import ProfileCard from './Card/ProfileCard';
 import { GetAcceptedRequest, ReceviedInterest, SentFriendRequest } from '../services/endpoint';
 import useSWR from 'swr';
@@ -128,6 +128,18 @@ const ActivityComponent = () => {
         <ProfileCard item={item} />
     );
 
+    if (isLoading1 || isLoading || isLoading3 ) {
+        return (
+            <View style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+            }}>
+                <ActivityIndicator size="large" />
+            </View>
+        )
+    }
+
     return (
         <View style={styles.container}>
             {/* Top Summary Section */}
@@ -144,17 +156,17 @@ const ActivityComponent = () => {
                         </Card.Content>
                     </TouchableOpacity>
                 </Card>
-               
-                    <Card style={styles.summaryCard}>
+
+                <Card style={styles.summaryCard}>
                     <TouchableOpacity onPress={() => {
-                    router.push('Shortlisted')
-                }}>
+                        router.push('Shortlisted')
+                    }}>
                         <Card.Content>
                             <Text variant="titleMedium">Shortlisted</Text>
                             <Text variant="bodySmall">0 profiles</Text>
                         </Card.Content>
-                </TouchableOpacity>
-                    </Card>
+                    </TouchableOpacity>
+                </Card>
             </View>
 
             {/* Interest Section */}
@@ -196,6 +208,8 @@ const ActivityComponent = () => {
 
             {/* Profiles List */}
             {
+
+
                 activeTab === 'Interest' && <FlatList
                     data={received}
                     renderItem={renderProfile2}
@@ -203,6 +217,14 @@ const ActivityComponent = () => {
                     contentContainerStyle={styles.profileList}
                     showsVerticalScrollIndicator={false}
                 />
+            }
+
+            {
+                activeTab === 'Interest' && received.length === 0 && (
+                    <View style={styles.noChatsContainer}>
+                        <Text style={styles.noChatsText}>No chats found 🙃</Text>
+                    </View>
+                )
             }
 
             {
@@ -216,6 +238,14 @@ const ActivityComponent = () => {
             }
 
             {
+                activeTab === 'Accepted' && accepted.length === 0 && (
+                    <View style={styles.noChatsContainer}>
+                        <Text style={styles.noChatsText}>No chats found 🙃</Text>
+                    </View>
+                )
+            }
+
+            {
                 activeTab === 'Sent' && <FlatList
                     data={sent}
                     renderItem={renderProfile}
@@ -223,6 +253,14 @@ const ActivityComponent = () => {
                     contentContainerStyle={styles.profileList}
                     showsVerticalScrollIndicator={false}
                 />
+            }
+
+{
+                activeTab === 'Sent' && sent.length === 0 && (
+                    <View style={styles.noChatsContainer}>
+                        <Text style={styles.noChatsText}>No chats found 🙃</Text>
+                    </View>
+                )
             }
         </View>
     );
@@ -288,6 +326,19 @@ const styles = StyleSheet.create({
     },
     heartButton: {
         alignSelf: 'flex-start',
+    },
+    noChatsContainer: {
+        flex: 1,
+        // justifyContent: 'center',
+        alignItems: 'center',
+        height: "100%",
+        marginTop: -150,
+    },
+    noChatsText: {
+        fontWeight: '700',
+        fontSize: 24,
+        letterSpacing: 1,
+        color: '#333',
     },
 });
 
