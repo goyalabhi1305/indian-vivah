@@ -6,7 +6,7 @@ const AdvanceSearch = () => {
   return (
     <View
     style={{
-      backgroundColor: "#fff",
+      backgroundColor: "#fff3f4",
       flex: 1,
     }}
     >
