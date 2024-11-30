@@ -20,11 +20,17 @@ const AdvancedSearch = () => {
 
   const [openSmoking, setOpenSmoking] = useState(false);
 
+  const [openComplexion, setOpenComplexion] = useState(false);
+
+  const [openManglikStatus, setOpenManglikStatus] = useState(false);
+
+  const [openGender, setOpenGender] = useState(false);
+
   const [openDiet, setOpenDiet] = useState(false);
   const dietItems = [
     { label: 'Vegetarian', value: 'VEG' },
     { label: 'Non-Vegetarian', value: 'NON_VEG' }
-];
+  ];
 
 
   const [selectedItem, setSelectedItem] = useState(null);
@@ -32,7 +38,7 @@ const AdvancedSearch = () => {
   const [religions, setReligions] = useState([
   ]);
 
-  
+
 
   useEffect(() => {
 
@@ -74,13 +80,13 @@ const AdvancedSearch = () => {
     { label: 'Never', value: 'NEVER' },
     { label: 'Occasionally', value: 'OCCASIONALLY' },
     { label: 'Frequently', value: 'FREQUENTLY' },
-];
+  ];
 
-const drinkingHabitsArray = [
+  const drinkingHabitsArray = [
     { label: 'Never', value: 'NEVER' },
     { label: 'Occasionally', value: 'OCCASIONALLY' },
     { label: 'Frequently', value: 'FREQUENTLY' },
-];
+  ];
   const { data, isLoading: isLoading2 } = useSWR('getOnBoardingSheetData', fetcher);
 
   const fetcher = async () => {
@@ -105,15 +111,18 @@ const drinkingHabitsArray = [
     religion: '',
     caste: '',
     complexion: '',
-    weight: '',
+    minweight: '',
+    maxweight: '',
     subCaste: '',
-    height: '',
+    minheight: '',
+    maxheight: '',
     education: '',
     profession: '',
     annualIncome: '',
     diet: '',
     drinkingHabits: '',
     smoking: '',
+    manglikStatus: ''
 
   });
 
@@ -171,39 +180,75 @@ const drinkingHabitsArray = [
     },
   ];
 
+  const complexions = [
+    { value: "fair", label: "Fair" },
+    { value: "light-wheatish", label: "Light Wheatish" },
+    { value: "medium-wheatish", label: "Medium Wheatish" },
+    { value: "dusky-wheatish", label: "Dusky Wheatish" },
+    { value: "golden-wheatish", label: "Golden Wheatish" },
+    { value: "light-dusky", label: "Light Dusky" },
+    { value: "rich-dusky", label: "Rich Dusky" },
+    { value: "olive-brown", label: "Olive Brown" },
+    { value: "caramel", label: "Caramel" },
+    { value: "light-brown", label: "Light Brown" },
+    { value: "medium-brown", label: "Medium Brown" },
+    { value: "deep-brown", label: "Deep Brown" },
+    { value: "chocolate-brown", label: "Chocolate Brown" },
+    { value: "ebony", label: "Ebony" },
+    { value: "deep-dark", label: "Deep Dark" },
+    { value: "mahogany", label: "Mahogany" },
+    { value: "jet-black-brown", label: "Jet Black Brown" }
+  ];
+
+  const manglikStatusArray = [
+    { label: 'Manglik', value: 'MANGLIK' },
+    { label: 'Non-Manglik', value: 'NON_MANGLIK' },
+    { label: 'Do not know', value: 'DONOT_KNOW' },
+    { label: 'Anshik Manglik', value: 'ANSHIK_MANGLIK' },
+  ];
+
+  const [genderItems, setGenderItems] = useState([
+    { label: 'Male', value: 'MALE' },
+    { label: 'Female', value: 'FEMALE' },
+    { label: 'Other', value: 'OTHER' }
+  ]);
+
   const handleSearch = async () => {
     try {
-    //   {
-    //     "occupation": "engineer",
-    //     "manglikStatus": "MANGLIK",
-    //     "gender": "MALE",
-    //     "age": [
-    //         "24-30",
-    //         "35-40"
-    //     ],
-    //     "diet": "VEG",
-    //     "weight": 75, 
-    //     "height": "180",
-    //     "complexion": "Fair",
-    //     "education": "Bachelors in Computer Science",
-    //     "religion": "Christianity",
-    //     "caste": "General",
-    //     "gotra": "Sharma",
-    //     "salary": 85000,
-    //     "maritalStatus": "SINGLE"
-    // }
+      //   {
+      //     "occupation": "engineer",
+      //     "manglikStatus": "MANGLIK",
+      //     "gender": "MALE",
+      //     "age": [
+      //         "24-30",
+      //         "35-40"
+      //     ],
+      //     "diet": "VEG",
+      //     "weight": 75, 
+      //     "height": "180",
+      //     "complexion": "Fair",
+      //     "education": "Bachelors in Computer Science",
+      //     "religion": "Christianity",
+      //     "caste": "General",
+      //     "gotra": "Sharma",
+      //     "salary": 85000,
+      //     "maritalStatus": "SINGLE"
+      // }
 
-    setLoading(true);
+      setLoading(true);
 
       const payload = {
-        height: formData.height,
+        minHeight: formData.minheight,
+        maxHeight: formData.maxheight,
+        minWeight: formData.minweight,
+        maxWeight: formData.maxweight,
         gender: formData.gender,
+        manglikStatus: formData.manglikStatus,
         age: [formData.age],
         maritalStatus: formData.maritalStatus,
         religion: formData.religion?.title ? JSON.stringify(formData.religion) : '',
         caste: formData.caste?.title ? JSON.stringify(formData.caste) : '',
         complexion: formData.complexion,
-        weight: formData.weight,
         subCaste: formData.subCaste,
         education: formData.education,
         profession: formData.profession,
@@ -218,7 +263,7 @@ const drinkingHabitsArray = [
       setLoading(false);
 
       setSearchResults(response.data?.data);
-      
+
       setShowInputs(false);
 
 
@@ -260,12 +305,43 @@ const drinkingHabitsArray = [
               />
             </View> */}
             <TextInput
-              label="Height (ft)"
+              label="Min Height (ft)"
               style={styles.input}
               keyboardType="numeric"
-              onChangeText={(text) => handleInputChange('height', text)}
-              value={formData.height}
+              onChangeText={(text) => handleInputChange('minheight', text)}
+              value={formData.minheight}
             />
+
+            <TextInput
+              label="Max Height (ft)"
+              style={styles.input}
+              keyboardType="numeric"
+              onChangeText={(text) => handleInputChange('maxheight', text)}
+              value={formData.maxheight}
+            />
+
+<DropDownPicker
+              open={openGender}
+              value={formData.gender}
+              items={genderItems}
+              style={{
+                backgroundColor: '#fff3f4',
+                marginBottom: 20,
+                marginTop: 10
+              }}
+
+              setOpen={setOpenGender}
+              setValue={(callback) => {
+                const value = typeof callback === 'function' ? callback(formData.gender) : callback;
+                handleInputChange('gender', value);
+                console.log('Selected Gender:', value);
+              }}
+              setItems={setGenderItems}
+              
+              placeholder="Select Gender"
+            />
+
+          
 
             <DropDownPicker
               open={openAge}
@@ -288,6 +364,30 @@ const drinkingHabitsArray = [
               // setItems={setGenderItems}
 
               placeholder="Select Age"
+            />
+
+
+            <DropDownPicker
+              open={openComplexion}
+              value={formData.complexion}
+              items={complexions}
+              style={{
+                backgroundColor: '#fff3f4',
+                marginBottom: 10,
+                marginTop: 10,
+                zIndex: 1,
+                backgroundColor: '#fff3f4',
+              }}
+
+              setOpen={setOpenComplexion}
+              setValue={(callback) => {
+                const value = typeof callback === 'function' ? callback(formData.gender) : callback;
+                handleInputChange('complexion', value);
+                console.log('Selected Age:', value);
+              }}
+              // setItems={setGenderItems}
+              listMode="SCROLLVIEW"
+              placeholder="Select Complexion"
             />
 
             <DropDownPicker
@@ -388,24 +488,49 @@ const drinkingHabitsArray = [
               />
             </View>
 
-            <TextInput label="Complexion" 
-            onChangeText={(text) => handleInputChange('complexion', text)}
-            value={formData.complexion}
-          
-            style={styles.input} />
+            <DropDownPicker
+              open={openManglikStatus}
+              value={formData.manglikStatus}
+              items={manglikStatusArray}
+              setOpen={setOpenManglikStatus}
+
+              setValue={(callback) => {
+                const value = typeof callback === 'function' ? callback(formData.bloodGroup) : callback;
+                handleInputChange('manglikStatus', value);
+                console.log('manglikStatus', value);
+              }}
+              placeholder="Select Manglik Status"
+
+              style={{
+                backgroundColor: '#fff3f4',
+              }}
+
+            />
+
+
             <TextInput
-              label="Weight"
-              onChangeText={(text) => handleInputChange('weight', text)}
-              value={formData.weight}
+              label="Min Weight (kg)"
+              onChangeText={(text) => handleInputChange('minweight', text)}
+              value={formData.minweight}
               style={styles.input}
               keyboardType="numeric"
             />
+
+            <TextInput
+              label="Max Weight (kg)"
+              onChangeText={(text) => handleInputChange('maxweight', text)}
+              value={formData.maxweight}
+              style={styles.input}
+              keyboardType="numeric"
+            />
+
+
             <TextInput
 
               onChangeText={(text) => handleInputChange('subCaste', text)}
               value={formData.subCaste}
-            
-            label="Sub caste / Gotra" style={styles.input} />
+
+              label="Sub caste / Gotra" style={styles.input} />
 
             {/* Location */}
             {/* <Text style={styles.sectionHeader}>Location</Text>
@@ -414,16 +539,16 @@ const drinkingHabitsArray = [
 
             {/* Professional Details */}
             <Text style={styles.sectionHeader}>Professional Details</Text>
-            <TextInput label="Education" style={styles.input} 
-            onChangeText={(text) => handleInputChange('education', text)}
-            value={formData.education}
-            
+            <TextInput label="Education" style={styles.input}
+              onChangeText={(text) => handleInputChange('education', text)}
+              value={formData.education}
+
             />
             <TextInput
               onChangeText={(text) => handleInputChange('profession', text)}
               value={formData.profession}
-            
-            label="Profession" style={styles.input} />
+
+              label="Profession" style={styles.input} />
             <TextInput
               label="Annual Income"
               style={styles.input}
@@ -435,67 +560,67 @@ const drinkingHabitsArray = [
             {/* Hobbies */}
             <Text style={styles.sectionHeader}>Hobbies</Text>
             <View style={styles.input}>
-                            <DropDownPicker
-                                open={openDiet}
-                                value={formData.diet}
-                                items={dietItems}
+              <DropDownPicker
+                open={openDiet}
+                value={formData.diet}
+                items={dietItems}
 
-                                setOpen={setOpenDiet}
-                                setValue={(callback) => {
-                                    const value = typeof callback === 'function' ? callback(formData.gender) : callback;
-                                    handleInputChange('diet', value);
-                                    console.log('Selected Gender:', value);
-                                }}
+                setOpen={setOpenDiet}
+                setValue={(callback) => {
+                  const value = typeof callback === 'function' ? callback(formData.gender) : callback;
+                  handleInputChange('diet', value);
+                  console.log('Selected Gender:', value);
+                }}
 
-                                style={{
-                                    backgroundColor: '#fff3f4',
-                                }}
+                style={{
+                  backgroundColor: '#fff3f4',
+                }}
 
-                                placeholder="Select Diet"
-                            />
-                        </View>
-                        <View style={styles.input}>
-                    <DropDownPicker
-                        open={openDrinkingHabits}
-                        value={formData.drinkingHabits}
-                        items={drinkingHabitsArray}
-                        setOpen={setOpenDrinkingHabits}
-                        style={{
-                            zIndex: 1,
-                            backgroundColor: '#fff3f4',
-                        }}
-                        setValue={(callback) => {
-                            const value = typeof callback === 'function' ? callback(formData.bloodGroup) : callback;
-                            handleInputChange('drinkingHabits', value);
-                            console.log('drinkingHabits', value);
-                        }}
-                        placeholder="Select Drinking Habits"
-                        direction="BOTTOM"
-                  
-                    />
+                placeholder="Select Diet"
+              />
+            </View>
+            <View style={styles.input}>
+              <DropDownPicker
+                open={openDrinkingHabits}
+                value={formData.drinkingHabits}
+                items={drinkingHabitsArray}
+                setOpen={setOpenDrinkingHabits}
+                style={{
+                  zIndex: 1,
+                  backgroundColor: '#fff3f4',
+                }}
+                setValue={(callback) => {
+                  const value = typeof callback === 'function' ? callback(formData.bloodGroup) : callback;
+                  handleInputChange('drinkingHabits', value);
+                  console.log('drinkingHabits', value);
+                }}
+                placeholder="Select Drinking Habits"
+                direction="BOTTOM"
 
-                </View>
+              />
 
-                <View style={styles.input}>
-                    <DropDownPicker
-                        open={openSmoking}
-                        value={formData.smoking}
-                        items={smokingArray}
-                        setOpen={setOpenSmoking}
-                        style={{
-                            zIndex: 1,
-                            backgroundColor: '#fff3f4',
-                        }}
-                        setValue={(callback) => {
-                            const value = typeof callback === 'function' ? callback(formData.bloodGroup) : callback;
-                            handleInputChange('smoking', value);
-                            console.log('smoking', value);
-                        }}
-                        placeholder="Select Smoking Habits"
-                        direction=""
-                    />
+            </View>
 
-                </View>
+            <View style={styles.input}>
+              <DropDownPicker
+                open={openSmoking}
+                value={formData.smoking}
+                items={smokingArray}
+                setOpen={setOpenSmoking}
+                style={{
+                  zIndex: 1,
+                  backgroundColor: '#fff3f4',
+                }}
+                setValue={(callback) => {
+                  const value = typeof callback === 'function' ? callback(formData.bloodGroup) : callback;
+                  handleInputChange('smoking', value);
+                  console.log('smoking', value);
+                }}
+                placeholder="Select Smoking Habits"
+                direction=""
+              />
+
+            </View>
 
             {/* Horoscope Details */}
             {/* <Text style={styles.sectionHeader}>Horoscope Details</Text>
@@ -509,10 +634,10 @@ const drinkingHabitsArray = [
                 paddingVertical: 0,
                 marginBottom: 32,
               }
-            } 
-            loading={loading}
-            disabled={loading}
-            onPress={handleSearch}>
+            }
+              loading={loading}
+              disabled={loading}
+              onPress={handleSearch}>
               Search
             </Button>
           </ScrollView>
@@ -525,6 +650,15 @@ const drinkingHabitsArray = [
             >
               Back to Search
             </Button> */}
+
+            
+{
+                searchResults.length === 0 && (
+                    <View style={styles.noChatsContainer}>
+                        <Text style={styles.noChatsText}>No chats found 🙃</Text>
+                    </View>
+                )
+            }
             <FlatList
               data={searchResults}
               showsVerticalScrollIndicator={false}
@@ -587,6 +721,16 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'red',
     marginRight: 16,
+  },
+  noChatsContainer: {
+    alignItems: 'center',
+    marginTop: 300
+  },
+  noChatsText: {
+    fontWeight: '700',
+    fontSize: 24,
+    letterSpacing: 1,
+    color: '#333',
   },
 });
 
