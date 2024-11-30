@@ -188,6 +188,20 @@ export default function RootLayout() {
         
         />
 
+        <Stack.Screen name="ProfileVisit"
+          options={{
+            headerTitle: 'Profile Visit',
+            headerShown: true,
+          }}
+        />
+
+        <Stack.Screen name="ShortListed"
+          options={{
+            headerTitle: 'Short Listed',
+            headerShown: true,
+          }}
+        />
+
         
       </Stack>
 
