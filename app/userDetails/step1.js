@@ -277,7 +277,7 @@ const Step1 = () => {
           <FieldHelperText error={errors.email} />
 
           {
-           religions?.length > 0 && !isLoading && !isLoading2  && <View style={styles.input}>
+           religions?.length > 0 && <View style={styles.input}>
              <AutocompleteDropdown
                clearOnFocus={false}
                closeOnBlur={true}
@@ -312,7 +312,6 @@ const Step1 = () => {
              />
            </View>
           }
-          <FieldHelperText error={errors.religion} />
 
 
           <View style={styles.input}>
@@ -344,8 +343,6 @@ const Step1 = () => {
               dataSet={casts}
             />
           </View>
-          <FieldHelperText error={errors.caste} />
-
 
           <TextInput
             label="Sub Caste / Gotra"
