@@ -3,6 +3,7 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native
 import useSWR from "swr";
 import { GetRandomUser } from "../services/endpoint";
 import ProfileCard from "./Card/ProfileCard";
+import { ActivityIndicator } from "react-native-paper";
 
 const Recommendations = ({ setActiveComponent }) => {
   const [showAll, setShowAll] = useState(false);
@@ -23,6 +24,18 @@ const Recommendations = ({ setActiveComponent }) => {
     <ProfileCard item={item} />
   );
 
+
+  if (isLoading) {
+    return (
+      <View style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    }}>
+        <ActivityIndicator size="large" />
+    </View>
+    )
+  }
 
   return (
     <View style={styles.container}>
