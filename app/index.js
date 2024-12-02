@@ -199,7 +199,6 @@ export default function MyComponent() {
 						backgroundColor: '#FFF3F4',
 					},
 
-					headerTintColor: '#fff',
 					headerTitleStyle: {
 						fontWeight: 'bold',
 					},
@@ -258,8 +257,9 @@ export default function MyComponent() {
 					headerShown: true,
 					headerStyle: {
 						backgroundColor: '#FFF3F4',
-						height: 60,
+						height: 120,
 					},
+					headerTitle: 'Premium',
 					tabBarIcon: ({ color, size }) => {
 						return <IconCrown size={size} color={color} />;
 					},
