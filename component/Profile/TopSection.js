@@ -23,7 +23,7 @@ const TopSection = ({ data }) => {
             <Text style={{ fontSize: 24, fontWeight: "bold" }}>
                 {data?.firstName + " " + data?.lastName}
             </Text>
-            <Text>{data?._id}</Text>
+            <Text>{data?.shortId}</Text>
             </View>
         </View>
         <Divider />
