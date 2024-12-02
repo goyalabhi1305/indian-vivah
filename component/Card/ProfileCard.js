@@ -1,10 +1,10 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
-import { Avatar, Button, Card } from 'react-native-paper'
+import { Avatar, Button, Card, Icon } from 'react-native-paper'
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 import images from '../../constants/images'
 import { mutate } from 'swr'
-import { SendFriendRequest } from '../../services/endpoint'
+import { SendFriendRequest, ShortListUser } from '../../services/endpoint'
 import Toast from 'react-native-toast-message'
 
 const ProfileCard = ({ item }) => {
@@ -12,6 +12,8 @@ const ProfileCard = ({ item }) => {
     const naviagation = useNavigation()
 
     const [loadingInterest, setLoadingInterest] = useState(false)
+
+    const [heartClicked, setHeartClicked] = useState(false)
 
     function calculateAge(dobString) {
         const dob = new Date(dobString); // Convert the date string to a Date object
@@ -64,27 +66,46 @@ const ProfileCard = ({ item }) => {
 
     }
 
+    const handleShortlist = async (id) => {
+        try{
+
+            const payload = {
+                profileId: id
+            }
+
+            const response = await ShortListUser(payload);
+
+            
+
+        }catch(error){
+            console.log(error)
+        }
+    }
+
     return (
         <View>
-            <TouchableOpacity onPress={() => {
-                router.push(`UserProfile/${item?._id}`,)
-            }}
+
+            <TouchableOpacity
+                onPress={() => {
+                    router.push(`UserProfile/${item?._id}`);
+                }}
                 activeOpacity={0.9}
             >
                 <Card style={styles.card}>
                     <Card.Title
-                        title={(item?.firstName) + " " + item?.lastName}
-                        subtitle={`Location: ${item?.currentLocation?.city + " " +
-                            item?.currentLocation?.country
-                            }, Education: ${item.education}`}
-                        left={(props) => <Avatar.Image size={45} source={
-                            item?.avatar ? { uri: item.avatar } : images.NoUser
-                        } />}
-                        right={(props) => (
-                            <Text style={styles.heartIcon} {...props}>
-                                ❤️
-                            </Text>
+                        title={`${item?.firstName} ${item?.lastName}`}
+                        subtitle={`Location: ${item?.currentLocation?.city} ${item?.currentLocation?.country}, Education: ${item.education}`}
+                        left={(props) => (
+                            <Avatar.Image
+                                size={45}
+                                source={item?.avatar ? { uri: item.avatar } : images.NoUser}
+                            />
                         )}
+                        // right={(props) => (
+                        //     <Text style={styles.heartIcon} {...props}>
+                               
+                        //     </Text>
+                        // )}
                     />
                     <Card.Content>
                         <Text>Age: {calculateAge(item.dob)}</Text>
@@ -94,24 +115,51 @@ const ProfileCard = ({ item }) => {
                     </Card.Content>
                     <Card.Actions>
                         <Button
-                        loading={loadingInterest}
-                        disabled={loadingInterest}
-                        mode="contained"
+                            loading={loadingInterest}
+                            disabled={loadingInterest}
+                            mode="contained"
                             onPress={() => {
-                                handleSendInterest(item._id)
-                            }
-                            }
+                                handleSendInterest(item._id);
+                            }}
                         >
                             Send
                         </Button>
-                        <Button mode="outlined" onPress={() => {
-                            handleSend(item._id)
-                        }}>
+                        <Button mode="outlined" onPress={() => handleSend(item._id)}>
                             Chat
                         </Button>
                     </Card.Actions>
+                    <Card.Actions>
+                        {/* <Button
+                            loading={loadingInterest}
+                            disabled={loadingInterest}
+                            mode="contained"
+                            onPress={() => {
+                                handleSendInterest(item._id);
+                            }}
+                        >
+                            Send
+                        </Button>
+                        <Button mode="outlined" onPress={() => handleSend(item._id)}>
+                            Chat
+                        </Button> */}
+                         <TouchableOpacity
+                                    onPress={(event) => {
+                                        event.stopPropagation(); // Prevent event from bubbling
+                                        setHeartClicked(!heartClicked);
+                                        handleShortlist(item._id);
+                                    }}
+                                    style={styles.heartIcon}
+                                >
+                                    <Icon
+                                        source={heartClicked ? 'heart' : 'heart-outline'}
+                                        size={25}
+                                        color={heartClicked ? 'red' : 'black'}
+                                    />
+                                </TouchableOpacity>
+                    </Card.Actions>
                 </Card>
-            </TouchableOpacity>
+            </TouchableOpacity>;
+
         </View>
     )
 }
@@ -122,10 +170,17 @@ const styles = StyleSheet.create({
     card: {
         marginHorizontal: 16,
         marginVertical: 8,
+        position: 'relative',
         backgroundColor: '#fff'
     },
     heartIcon: {
         marginRight: 20,
-        fontSize: 20
+        fontSize: 20,
+        paddingHorizontal: 30,
+        paddingVertical: 20,
+        zIndex: 10000,
+        position: 'absolute',
+        top: -220,
+        right: -30,
     }
 })

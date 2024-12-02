@@ -14,8 +14,14 @@ const TheyShortListed = () => {
 
     const { data, error, isLoading } = useSWR('theyShortListedAPI', fetcher)
 
+
+
+    const renderProfile = ({ item }) => (
+        <ProfileCard item={item?.user} />
+    );
+
     if (isLoading) {
-        <View style={{
+        return <View style={{
             flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
@@ -24,12 +30,17 @@ const TheyShortListed = () => {
         </View>
     }
 
-    const renderProfile = ({ item }) => (
-        <ProfileCard item={item?.interactedBy} />
-    );
 
     return (
         <View>
+            
+            {
+                data.length === 0 && (
+                    <View style={styles.noChatsContainer}>
+                        <Text style={styles.noChatsText}>No chats found 🙃</Text>
+                    </View>
+                )
+            }
             <FlatList
                 data={data}
                 renderItem={renderProfile}
@@ -50,6 +61,18 @@ const styles = StyleSheet.create({
     profileList: {
         padding: 5
     },
+    noChatsContainer: {
+        // flex: 1,
+        // justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 300
+      },
+      noChatsText: {
+        fontWeight: '600',
+        fontSize: 24,
+        letterSpacing: 1,
+        color: '#333',
+      },
 })
 
 export default TheyShortListed
