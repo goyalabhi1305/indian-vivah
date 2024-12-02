@@ -2,7 +2,7 @@ import React from 'react';
 import { FlatList, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Card, Text, Button, Chip, ActivityIndicator } from 'react-native-paper';
 import ProfileCard from './Card/ProfileCard';
-import { GetAcceptedRequest, ReceviedInterest, SentFriendRequest } from '../services/endpoint';
+import { GetAcceptedRequest, ProfileVisitors, ReceviedInterest, SentFriendRequest, TheyShortListedAPI } from '../services/endpoint';
 import useSWR from 'swr';
 import { useRouter } from 'expo-router';
 
@@ -98,6 +98,22 @@ const profiles = [
 const ActivityComponent = () => {
     const router = useRouter();
 
+    const fetcher4 = async () => {
+        const response = await ProfileVisitors();
+        console.log("response",response?.data)
+        return response.data?.interactionCount || [];
+    }
+
+    const { data:count, error, isLoading: isLoaindg4 } = useSWR('profileVisotrs-count', fetcher4)
+
+    const fetcher5 = async () => {
+        const response = await TheyShortListedAPI();
+        console.log("response",response?.data)
+        return response.data?.interactionCount;
+    }
+
+    const { data:count2, isLoading: isLoading5} = useSWR('theyShortListedAPI-count', fetcher5)
+
     const [activeTab, setActiveTab] = React.useState('Interest');
 
     const fetcher = async () => {
@@ -125,13 +141,16 @@ const ActivityComponent = () => {
         <ProfileCard item={item?.receiver} />
     );
     const renderProfile2 = ({ item }) => (
-        <ProfileCard item={item} />
+        <ProfileCard item={item?.receiver} />
     ); 
     const renderProfile3 = ({ item }) => (
-        <ProfileCard item={item?.sender} />
+        <ProfileCard item={item?.sender}
+        cardType="received"
+        friendReqId={item._id}
+        />
     );
 
-    if (isLoading1 || isLoading || isLoading3 ) {
+    if (isLoading1 || isLoading || isLoading3 || isLoaindg4 || isLoading5) {
         return (
             <View style={{
                 flex: 1,
@@ -155,7 +174,7 @@ const ActivityComponent = () => {
                     >
                         <Card.Content>
                             <Text variant="titleMedium">Profile visit data</Text>
-                            <Text variant="bodySmall">0 profiles</Text>
+                            <Text variant="bodySmall">{count} profiles</Text>
                         </Card.Content>
                     </TouchableOpacity>
                 </Card>
@@ -166,7 +185,7 @@ const ActivityComponent = () => {
                     }}>
                         <Card.Content>
                             <Text variant="titleMedium">Shortlisted</Text>
-                            <Text variant="bodySmall">0 profiles</Text>
+                            <Text variant="bodySmall">{count2} profiles</Text>
                         </Card.Content>
                     </TouchableOpacity>
                 </Card>
@@ -225,7 +244,8 @@ const ActivityComponent = () => {
             {
                 activeTab === 'Interest' && received.length === 0 && (
                     <View style={styles.noChatsContainer}>
-                        <Text style={styles.noChatsText}>No chats found 🙃</Text>
+                        <Text style={styles.noChatsText}>
+                            No Received Interest found 🙃</Text>
                     </View>
                 )
             }
@@ -243,7 +263,8 @@ const ActivityComponent = () => {
             {
                 activeTab === 'Accepted' && accepted.length === 0 && (
                     <View style={styles.noChatsContainer}>
-                        <Text style={styles.noChatsText}>No chats found 🙃</Text>
+                        <Text style={styles.noChatsText}>
+                            No Accepted Request found 🙃</Text>
                     </View>
                 )
             }
@@ -261,7 +282,7 @@ const ActivityComponent = () => {
 {
                 activeTab === 'Sent' && sent.length === 0 && (
                     <View style={styles.noChatsContainer}>
-                        <Text style={styles.noChatsText}>No chats found 🙃</Text>
+                        <Text style={styles.noChatsText}>No Sent Request Found 🙃</Text>
                     </View>
                 )
             }
@@ -339,7 +360,7 @@ const styles = StyleSheet.create({
     },
     noChatsText: {
         fontWeight: '700',
-        fontSize: 24,
+        fontSize: 20,
         letterSpacing: 1,
         color: '#333',
     },
