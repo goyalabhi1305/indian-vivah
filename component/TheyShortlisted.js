@@ -17,7 +17,7 @@ const TheyShortListed = () => {
 
 
     const renderProfile = ({ item }) => (
-        <ProfileCard item={item?.user} />
+        <ProfileCard item={item?.interactedBy} />
     );
 
     if (isLoading) {
