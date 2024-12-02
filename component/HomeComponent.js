@@ -53,7 +53,7 @@ const HomeComponent = () => {
 
         setUsersData((prev) => [...prev, ...response.data]);
         setUserMeta(response.meta);
-        setIsEndReached(response.meta.totalUsers <= usersData.length + response.data.length);
+        setIsEndReached(response.meta.totalUsers - 1 <= usersData.length + response.data.length);
         setPage((prev) => prev + 1);
         setLoadMoreLoading(false);
     };
@@ -68,6 +68,8 @@ const HomeComponent = () => {
         setPage(1);
         setConfig({ ...config, refreshing: false });
     };
+    
+    console.log("isEndReached", isEndReached);
 
     const renderHeader = () => (
         <View style={styles.profileContainer}>

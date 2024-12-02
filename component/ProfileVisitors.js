@@ -9,7 +9,7 @@ const ProfileVisitorsComponent = () => {
 
     const fetcher = async () => {
         const response = await ProfileVisitors();
-        return response.data?.data;
+        return response.data?.data || [];
     }
 
     const { data, error, isLoading } = useSWR('profileVisotrs', fetcher)
@@ -32,7 +32,7 @@ const ProfileVisitorsComponent = () => {
         <View>
              
              {
-                data.length === 0 && (
+                data?.length === 0 && (
                     <View style={styles.noChatsContainer}>
                         <Text style={styles.noChatsText}>No chats found 🙃</Text>
                     </View>

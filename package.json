@@ -9,6 +9,8 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@knocklabs/expo": "^0.2.2",
+    "@knocklabs/react-native": "^0.5.2",
     "@react-native-async-storage/async-storage": "^2.1.0",
     "@react-native-clipboard/clipboard": "^1.15.0",
     "@react-native-picker/picker": "^2.9.0",
