@@ -126,6 +126,9 @@ const ActivityComponent = () => {
     );
     const renderProfile2 = ({ item }) => (
         <ProfileCard item={item} />
+    ); 
+    const renderProfile3 = ({ item }) => (
+        <ProfileCard item={item?.sender} />
     );
 
     if (isLoading1 || isLoading || isLoading3 ) {
@@ -212,7 +215,7 @@ const ActivityComponent = () => {
 
                 activeTab === 'Interest' && <FlatList
                     data={received}
-                    renderItem={renderProfile2}
+                    renderItem={renderProfile3}
                     keyExtractor={(item) => item.id}
                     contentContainerStyle={styles.profileList}
                     showsVerticalScrollIndicator={false}
