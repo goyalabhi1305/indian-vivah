@@ -31,6 +31,13 @@ const ProfileIVisted = () => {
 
     return (
         <View>
+              {
+                data.length === 0 && (
+                    <View style={styles.noChatsContainer}>
+                        <Text style={styles.noChatsText}>No chats found 🙃</Text>
+                    </View>
+                )
+            }
             <FlatList
                 data={data}
                 renderItem={renderProfile}
@@ -51,6 +58,16 @@ const styles = StyleSheet.create({
     profileList: {
         padding: 5,
     },
+    noChatsContainer: {
+        alignItems: 'center',
+        marginTop: 200
+      },
+      noChatsText: {
+        fontWeight: '600',
+        fontSize: 24,
+        letterSpacing: 1,
+        color: '#333',
+      },
 })
 
 export default ProfileIVisted
