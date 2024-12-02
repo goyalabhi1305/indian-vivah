@@ -16,7 +16,7 @@ const ProfileIVisted = () => {
 
 
     if (isLoading) {
-        <View style={{
+        return <View style={{
             flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
@@ -34,7 +34,7 @@ const ProfileIVisted = () => {
               {
                 data?.length === 0 && (
                     <View style={styles.noChatsContainer}>
-                        <Text style={styles.noChatsText}>No chats found 🙃</Text>
+                        <Text style={styles.noChatsText}>No Data 🙃</Text>
                     </View>
                 )
             }
