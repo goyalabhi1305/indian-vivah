@@ -186,8 +186,14 @@ const MyFeedComponent = () => {
                 flex: 1,
                 justifyContent: 'center',
                 alignItems: 'center',
+                height: 500
               }}>
-                <Text>No notifications found 🙃</Text>
+                <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: 'bold'
+                }}
+                >No notifications found 🙃</Text>
               </View>
             )
           }
