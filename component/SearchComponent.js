@@ -34,7 +34,7 @@ const SearchComponent = () => {
       </View>
 
       {/* Saved Profiles */}
-      <View style={styles.savedProfiles}>
+      {/* <View style={styles.savedProfiles}>
         <Text
         style={{
           fontSize: 20,
@@ -49,7 +49,7 @@ const SearchComponent = () => {
             </View>
           ))}
         </View>
-      </View>
+      </View> */}
 
        <Recommendations setActiveComponent={setActiveComponent} />
     </View>
@@ -57,10 +57,14 @@ const SearchComponent = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 10,
+  container: { flex: 1, 
     backgroundColor: '#fff3f4',
+    width: '100%',
+
    },
-  header: { flexDirection: "row", justifyContent: "space-between", marginBottom: 20 },
+  header: { flexDirection: "row", justifyContent: "space-between", marginBottom: 20,
+    padding:15
+   },
   savedProfiles: { marginBottom: 20 },
   profileRow: { flexDirection: "row", flexWrap: "wrap" },
   savedProfile: { margin: 5, padding: 10, borderWidth: 1, borderColor: "gray", borderRadius: 5 },
