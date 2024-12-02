@@ -226,9 +226,9 @@ const QuickSearch = () => {
             }}
           >
             <View style={styles.searchBox}>
-              <Text style={styles.headerText}>
+              {/* <Text style={styles.headerText}>
                 Search By Location
-              </Text>
+              </Text> */}
               {/* </View> */}
               <View style={styles.pickerContainer}>
                 <Picker
@@ -367,7 +367,7 @@ const QuickSearch = () => {
                 }}
                 // setItems={setGenderItems}
 
-                placeholder="Select Gender"
+                placeholder="Select Age"
               />
             </View>
             <Button
