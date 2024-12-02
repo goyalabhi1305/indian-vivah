@@ -32,8 +32,9 @@ export default function MyComponent() {
           safeAreaInsets={insets}
 
           // make z-index low
-          style={{ elevation: 0, zIndex: 0 ,
-            backgroundColor:'#FFF3F4',
+          style={{
+            elevation: 0, zIndex: 0,
+            backgroundColor: '#FFF3F4',
           }}
 
           onTabPress={({ route, preventDefault }) => {
@@ -93,12 +94,30 @@ export default function MyComponent() {
             return <Icon name="home" size={size} color={color} />;
           },
           headerRight: () => (
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => router.push('Notification')}
+            <View
+              style={{ flexDirection: 'row' }}
             >
-              <Icon name="bell" size={24} color="#fff" style={{ marginRight: 20 }} />
-            </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => router.push('Search')}
+              >
+                <Icon name="magnify" size={24} color="#fff" style={{ marginRight: 20 }} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => router.push('Message')}
+              >
+                <Icon name="chat" size={24} color="#fff" style={{ marginRight: 20 }} />
+              </TouchableOpacity>
+
+
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => router.push('Notification')}
+              >
+                <Icon name="bell" size={24} color="#fff" style={{ marginRight: 20 }} />
+              </TouchableOpacity>
+            </View>
           ),
           headerTitle: '',
           headerLeft: () => (
@@ -106,7 +125,7 @@ export default function MyComponent() {
           ),
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Message"
         component={MessageScreen}
         options={{
@@ -160,7 +179,7 @@ export default function MyComponent() {
             </TouchableOpacity>
           ),
         }}
-      />
+      /> */}
       <Tab.Screen
         name="Activity"
         component={ActivityScreen}
@@ -255,21 +274,21 @@ function HomeScreen() {
   );
 }
 
-function MessageScreen() {
-  return (
-    <View style={styles.container}>
-      <MessageComponent />
-    </View>
-  );
-}
+// function MessageScreen() {
+//   return (
+//     <View style={styles.container}>
+//       <MessageComponent />
+//     </View>
+//   );
+// }
 
-function SearchScreen() {
-  return (
-    <View style={styles.container}>
-      <SearchComponent />
-    </View>
-  );
-}
+// function SearchScreen() {
+//   return (
+//     <View style={styles.container}>
+//       <SearchComponent />
+//     </View>
+//   );
+// }
 
 function ActivityScreen() {
   return (

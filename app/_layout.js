@@ -107,6 +107,24 @@ export default function RootLayout() {
 
         <Stack.Screen name="Notification" />
 
+        <Stack.Screen name="Message"
+
+          options={{
+            headerTitle: 'Chats',
+            headerShown: true,
+          }}
+
+
+        />
+
+        <Stack.Screen name="Search"
+
+          options={{
+            headerTitle: 'Search',
+            headerShown: true,
+          }}
+          />
+
         <Stack.Screen name="UserProfile" />
 
         <Stack.Screen name="UserProfile/[id]"
