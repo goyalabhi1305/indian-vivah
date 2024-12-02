@@ -60,7 +60,7 @@ const HeaderLeftComponent = () => {
                 }}
                 onPress={toggleDrawer}
             >
-                <Icon name="menu" size={24} color="#fff" style={{ marginLeft: 20 }} />
+                <Icon name="menu" size={24} style={{ marginLeft: 20 }} />
             </TouchableOpacity>
 
             {/* Overlay - TouchableWithoutFeedback to close the drawer */}
@@ -78,7 +78,7 @@ const HeaderLeftComponent = () => {
                         width: 250,
                         height: height + height,
                         transform: [{ translateX: drawerAnim }], // Use animated translation to move the drawer
-                        zIndex: 1001, // Ensure the drawer appears above the overlay
+                        zIndex: 90001, // Ensure the drawer appears above the overlay
                     }}
                 >
                     {/* Drawer content can go here */}

@@ -127,7 +127,7 @@ const ProfileCard = ({ item , cardType= 'normal',
                 style={{ position: 'relative' }}
             >
 
-                <Card style={styles.card}>
+                <Card style={styles.card} elevation={0}>
                     <Image
                         source={{ uri: item.avatar }}
 

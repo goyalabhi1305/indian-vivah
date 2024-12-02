@@ -15,11 +15,23 @@ import {
 import { TextInput, IconButton, ActivityIndicator } from 'react-native-paper';
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
 import images from '../constants/images';
-import { GetMessages, GetProfileDetailUser, SendMessage } from '../services/endpoint';
+import {
+	GetMessages,
+	GetProfileDetailUser,
+	SendMessage,
+} from '../services/endpoint';
 import useSWR from 'swr';
 
-const HeaderTitle = ({ firstname, lastname, profilephoto, handleRedirectToPortfolio }) => (
-	<TouchableOpacity onPress={handleRedirectToPortfolio} style={styles.headerContainer}>
+const HeaderTitle = ({
+	firstname,
+	lastname,
+	profilephoto,
+	handleRedirectToPortfolio,
+}) => (
+	<TouchableOpacity
+		onPress={handleRedirectToPortfolio}
+		style={styles.headerContainer}
+	>
 		{profilephoto ? (
 			<Image source={{ uri: profilephoto }} style={styles.profilePhoto} />
 		) : (
@@ -47,44 +59,40 @@ const SingleChat = () => {
 	// 	position: 'right',
 	// 	time: new Date().toISOString(),
 	// },
-	const [messages, setMessages] = useState([
-		
-	]);
+	const [messages, setMessages] = useState([]);
 	const [text, setText] = useState('');
 	const [loading, setLoading] = useState(true);
 	const [loadingMore, setLoadingMore] = useState(false);
 	const [endReached, setEndReached] = useState(false);
 
-
 	const fetcher2 = async () => {
-		const response = await GetProfileDetailUser(params.recevierId)
-		return response.data?.data
-	  }
-	
-	  const { data, isLoading, error } = useSWR(
+		const response = await GetProfileDetailUser(params.recevierId);
+		return response.data?.data;
+	};
+
+	const { data, isLoading, error } = useSWR(
 		params.recevierId ? `fetchUserProfileDetails${params.recevierId}` : null,
-		fetcher2)
+		fetcher2
+	);
 
 	const handleRedirectToPortfolio = () => {
 		router.push('/UserProfile/' + params.recevierId);
 	};
 
-	console.log("Data", data);
+	console.log('Data', data);
 	useEffect(() => {
 		navigation.setOptions({
 			headerTitle: () => (
 				<HeaderTitle
-					firstname={data?.firstName || "Loading..."}
+					firstname={data?.firstName || 'Loading...'}
 					lastname={data?.lastName || ' '}
 					profilephoto={data?.avatar}
 					handleRedirectToPortfolio={handleRedirectToPortfolio}
-
-					headerTintColor='#ffffff'
-
+					headerTintColor='#000'
 					// make the header text white and bold
 					headerTitleStyle={{
-						fontWeight: 'bold',
-						color: '#fff',
+						// fontWeight: 'bold',
+						color: '#000',
 					}}
 				/>
 			),
@@ -107,14 +115,12 @@ const SingleChat = () => {
 		const payload = {
 			receiverId: params.recevierId,
 			message: text,
-		}
+		};
 		await SendMessage(payload);
-
 	};
 
-
 	const fetcher = async () => {
-		try{
+		try {
 			const response = await GetMessages(params.recevierId);
 			// setData(response.data);
 			setMessages([...response.data.data, ...messages]);
@@ -123,16 +129,14 @@ const SingleChat = () => {
 			// if(messages.length + 15 > response.data.msg_cnt){
 			// 	setEndReached(true);
 			// }
-
-		}catch(error){
-			console.error("Error", error);
+		} catch (error) {
+			console.error('Error', error);
 		}
-	}
+	};
 
 	useEffect(() => {
 		fetcher();
 	}, []);
-
 
 	return (
 		<SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -140,19 +144,18 @@ const SingleChat = () => {
 				<KeyboardAvoidingView
 					style={styles.container}
 					behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-					keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 90}>
+					keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 90}
+				>
 					<ScrollView
 						ref={scrollViewRef}
 						style={styles.containerChat}
 						contentContainerStyle={styles.contentContainer}
-						onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
+						onContentSizeChange={() =>
+							scrollViewRef.current.scrollToEnd({ animated: true })
+						}
 					>
-
 						{loading && (
-							<ActivityIndicator
-								size='large'
-								style={styles.loader}
-							/>
+							<ActivityIndicator size='large' style={styles.loader} />
 						)}
 
 						{messages.map((message, index) => {
@@ -170,13 +173,20 @@ const SingleChat = () => {
 									style={{
 										alignItems: isSent ? 'flex-end' : 'flex-start',
 										marginVertical: 5,
-									}}>
+									}}
+								>
 									<View
 										style={[
 											styles.chatBubble,
 											{ backgroundColor: isSent ? '#0171e3' : '#dddada' },
-										]}>
-										<Text style={{ color: isSent ? 'white' : 'black', fontSize: 15 }}>
+										]}
+									>
+										<Text
+											style={{
+												color: isSent ? 'white' : 'black',
+												fontSize: 15,
+											}}
+										>
 											{message.message}
 										</Text>
 										<Text
@@ -185,7 +195,8 @@ const SingleChat = () => {
 												fontSize: 11,
 												textAlign: 'right',
 												marginTop: 5,
-											}}>
+											}}
+										>
 											{relativeTime}
 										</Text>
 									</View>
@@ -195,16 +206,16 @@ const SingleChat = () => {
 					</ScrollView>
 					<View style={styles.sendMessageContainer}>
 						<TextInput
-							placeholder="Type a message"
-							mode="outlined"
+							placeholder='Type a message'
+							mode='outlined'
 							style={styles.textInput}
 							value={text}
 							onChangeText={setText}
 							onSubmitEditing={handleSubmit}
 						/>
 						<IconButton
-							icon="send"
-							iconColor="#0171e3"
+							icon='send'
+							iconColor='#0171e3'
 							size={27}
 							onPress={handleSubmit}
 							style={styles.sendButton}
