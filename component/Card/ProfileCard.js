@@ -1,15 +1,18 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
-import { Avatar, Button, Card, Icon } from 'react-native-paper'
+import { Avatar, Button, Card, Divider, Icon, IconButton } from 'react-native-paper'
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 import images from '../../constants/images'
 import { mutate } from 'swr'
-import { SendFriendRequest, ShortListUser } from '../../services/endpoint'
+import { AcceptFriendRequest, SendFriendRequest, ShortListUser } from '../../services/endpoint'
 import Toast from 'react-native-toast-message'
 
-const ProfileCard = ({ item }) => {
+const ProfileCard = ({ item , cardType= 'normal',
+    friendReqId = null
+}) => {
     const router = useRouter()
     const naviagation = useNavigation()
+    const [loading, setLoading] = useState(false)
 
     const [loadingInterest, setLoadingInterest] = useState(false)
 
@@ -48,6 +51,8 @@ const ProfileCard = ({ item }) => {
 
             const response = await SendFriendRequest(payload);
 
+            await mutate('sent')
+
             setLoadingInterest(false)
             Toast.show({
                 type: 'success',
@@ -67,7 +72,7 @@ const ProfileCard = ({ item }) => {
     }
 
     const handleShortlist = async (id) => {
-        try{
+        try {
 
             const payload = {
                 profileId: id
@@ -75,10 +80,39 @@ const ProfileCard = ({ item }) => {
 
             const response = await ShortListUser(payload);
 
-            
+            await mutate('shortlisted')
 
-        }catch(error){
+
+
+        } catch (error) {
             console.log(error)
+        }
+    }
+
+    const handleAcceptRequest = async (id) => {
+        try {
+            setLoading(true)
+            const payload = {
+                requestId: friendReqId,
+                status: 'ACCEPTED'
+            }
+
+            const response = await AcceptFriendRequest(payload);
+            await mutate('interests')
+            await mutate('accepted')
+
+            if (response) {
+                Toast.show({
+                    type: 'success',
+                    text1: 'Request Accepted'
+                })
+            }
+
+
+        } catch (error) {
+            console.log(error)
+        }finally{
+            setLoading(false)
         }
     }
 
@@ -90,72 +124,230 @@ const ProfileCard = ({ item }) => {
                     router.push(`UserProfile/${item?._id}`);
                 }}
                 activeOpacity={0.9}
+                style={{ position: 'relative' }}
             >
+
                 <Card style={styles.card}>
-                    <Card.Title
-                        title={`${item?.firstName} ${item?.lastName}`}
-                        subtitle={`Location: ${item?.currentLocation?.city} ${item?.currentLocation?.country}, Education: ${item.education}`}
-                        left={(props) => (
-                            <Avatar.Image
-                                size={45}
-                                source={item?.avatar ? { uri: item.avatar } : images.NoUser}
-                            />
-                        )}
-                        // right={(props) => (
-                        //     <Text style={styles.heartIcon} {...props}>
-                               
-                        //     </Text>
-                        // )}
-                    />
-                    <Card.Content>
-                        <Text>Age: {calculateAge(item.dob)}</Text>
-                        <Text>Weight: {item.weight}</Text>
-                        <Text>Height: {item.height}</Text>
-                        <Text>Status: {item.maritalStatus}</Text>
-                    </Card.Content>
-                    <Card.Actions>
-                        <Button
-                            loading={loadingInterest}
-                            disabled={loadingInterest}
-                            mode="contained"
-                            onPress={() => {
-                                handleSendInterest(item._id);
+                    <Image
+                        source={{ uri: item.avatar }}
+
+                        resizeMethod='resize'
+                        resizeMode='cover'
+                        style={{
+                            position: 'absolute', width: '100%', height: '100%',
+                            zIndex: -1, opacity: 0.82, borderRadius: 30, overflow: 'hidden',
+
+
+                        }}
+                        fadeDuration={300}
+                    >
+
+
+
+                    </Image>
+                    <View
+                        style={{
+                            position: 'absolute', width: '100%', height: '100%',
+                            backgroundColor: 'black',
+                            zIndex: -1, opacity: 0.5, borderRadius: 30, overflow: 'hidden',
+
+                        }}
+                    >
+
+                    </View>
+
+                    <Card.Content
+                        style={{
+                            marginTop: 130
+                        }}
+                    >
+
+                        <Text
+                            style={{ color: 'white', fontSize: 20, fontWeight: 'bold', textTransform: 'capitalize' }}
+                        >
+                            {`${item?.firstName} ${item?.lastName}`}
+                        </Text>
+
+                        <Text
+                            style={{
+                                color: 'white', fontSize: 14, textTransform: 'capitalize',
+                                marginTop: "-10px", marginBottom: 15
                             }}
                         >
-                            Send
-                        </Button>
-                        <Button mode="outlined" onPress={() => handleSend(item._id)}>
-                            Chat
-                        </Button>
+                            {`Location: ${item?.currentLocation?.city} ${item?.currentLocation?.country}, Education: ${item.education}`}
+                        </Text>
+
+                        <Text
+                            style={{
+                                color: 'white', fontSize: 16, textTransform: 'capitalize',
+                                marginBottom: 5
+                            }}
+                        >
+                            <Text style={{ fontWeight: 'bold' }}>Age: </Text>
+                            {calculateAge(item.dob)}</Text>
+                        <Text
+                            style={{
+                                color: 'white', fontSize: 16, textTransform: 'capitalize',
+                                marginBottom: 5
+                            }}
+                        >
+                            <Text style={{ fontWeight: 'bold' }}>
+                                Weight: </Text>
+                            {item.weight}</Text>
+                        <Text
+                            style={{
+                                color: 'white', fontSize: 16, textTransform: 'capitalize',
+                                marginBottom: 5
+                            }}
+                        >
+                            <Text style={{ fontWeight: 'bold' }}>
+                                Height: </Text>{item.height}</Text>
+                        <Text
+                            style={{
+                                color: 'white', fontSize: 16, textTransform: 'capitalize',
+                                marginBottom: 5
+                            }}
+                        >
+                            <Text style={{ fontWeight: 'bold' }}>
+                                Status: </Text>{item.maritalStatus}</Text>
+
+                        <Text
+                            style={{
+                                color: 'white', fontSize: 16, textTransform: 'capitalize',
+                                marginBottom: 5
+                            }}
+                        >
+                            <Text style={{ fontWeight: 'bold' }}>
+                                Earns: </Text>{item.salary} lacs.p.a </Text>
+                    </Card.Content>
+                    <Divider
+                        style={{
+                            backgroundColor: 'white',
+                            marginBottom: 0,
+                            marginTop: 10,
+                            height: 1
+                        }}
+                    />
+                    <Card.Actions
+                    style={{
+                        paddingBottom: 0,
+                    }}
+                    >
+                       {
+                        cardType === 'normal' ?  <View
+                        style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            width: '100%',
+                            
+                        }}
+                    >
+                       
+
+                        <View>
+                            <IconButton
+                                iconColor={'#ff4f4f'}
+                                icon={'rocket-launch'}
+                                mode='contained-tonal'
+                                style={{
+                                    backgroundColor: 'white',
+                                    padding:0}}
+                                size={25}
+                                onPress={() => {
+                                    handleSendInterest(item._id);
+                                }}
+                            >
+                                Send
+                            </IconButton>
+                            <Text style={{
+                                color: 'white', textAlign: 'center',
+                                fontSize: 12, textTransform: 'capitalize'
+                            }}>Send</Text>
+                        </View>
+
+                        <View>
+                            <IconButton
+                                iconColor={
+                                    heartClicked ? 'white' : '#ff4f4f'
+                                }
+                                icon={'heart'}
+                                size={25}
+                                style={{
+                                    backgroundColor: heartClicked ? 'red' : 'white',
+                                    padding:0
+                                }}
+                                onPress={() => {
+                                    setHeartClicked(!heartClicked);
+                                    handleShortlist(item._id);
+                                }}
+                            >
+                                Shortlist
+                            </IconButton>
+                            <Text style={{
+                                color: 'white', textAlign: 'center',
+                                fontSize: 12, textTransform: 'capitalize'
+                            }}>Shortlist</Text>
+                        </View>
+                        <View
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center'
+                            }}
+                        >
+                            <IconButton
+                                iconColor={'#ff4f4f'}
+                                icon={'chat'}
+                                mode='contained-tonal'
+                                style={{
+                                    backgroundColor: 'white',
+                                    padding:0
+                                }}
+                                size={25}
+                                onPress={() => handleSend(item._id)}>
+                                Chat
+                            </IconButton>
+                            <Text style={{
+                                color: 'white', textAlign: 'center',
+                                fontSize: 12, textTransform: 'capitalize'
+                            }}>Chat</Text>
+                        </View>
+                    </View> : <View
+                    style={{
+                        flexDirection: 'row',
+                        width: '100%',
+                        justifyContent: 'center',
+                        
+                    }}
+                    >
+                            <Button
+                                mode='contained'
+                                onPress={() => {
+                                    handleAcceptRequest(item._id);
+                                }}
+                                style={{
+                                    backgroundColor: '#ff4f4f',
+                                    borderRadius: 20,
+                                    width: '100%',
+                                    padding: 0,
+                                    margin: 0
+                                }}
+                                contentStyle={{
+                                    padding: 0,
+                                    margin: 0
+                                }}
+                                icon={'account-plus'}
+                                disabled={loading}
+                                loading={loading}
+                            >
+                                Accept Request
+                            </Button>
+                            
+                    </View>
+                       }
                     </Card.Actions>
                     <Card.Actions>
-                        {/* <Button
-                            loading={loadingInterest}
-                            disabled={loadingInterest}
-                            mode="contained"
-                            onPress={() => {
-                                handleSendInterest(item._id);
-                            }}
-                        >
-                            Send
-                        </Button>
-                        <Button mode="outlined" onPress={() => handleSend(item._id)}>
-                            Chat
-                        </Button> */}
-                         <TouchableOpacity
-                                    onPress={(event) => {
-                                        event.stopPropagation(); // Prevent event from bubbling
-                                        setHeartClicked(!heartClicked);
-                                        handleShortlist(item._id);
-                                    }}
-                                    style={styles.heartIcon}
-                                >
-                                    <Icon
-                                        source={heartClicked ? 'heart' : 'heart-outline'}
-                                        size={25}
-                                        color={heartClicked ? 'red' : 'black'}
-                                    />
-                                </TouchableOpacity>
+
                     </Card.Actions>
                 </Card>
             </TouchableOpacity>;
@@ -180,7 +372,7 @@ const styles = StyleSheet.create({
         paddingVertical: 20,
         zIndex: 10000,
         position: 'absolute',
-        top: -220,
-        right: -30,
+        top: -170,
+        right: -20,
     }
 })
