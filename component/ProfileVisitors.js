@@ -14,8 +14,14 @@ const ProfileVisitorsComponent = () => {
 
     const { data, error, isLoading } = useSWR('profileVisotrs', fetcher)
 
+   
+
+    const renderProfile = ({ item }) => (
+        <ProfileCard item={item?.interactedBy} />
+    );
+
     if (isLoading) {
-        <View style={{
+        return <View style={{
             flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
@@ -24,17 +30,13 @@ const ProfileVisitorsComponent = () => {
         </View>
     }
 
-    const renderProfile = ({ item }) => (
-        <ProfileCard item={item?.interactedBy} />
-    );
-
     return (
         <View>
              
              {
                 data?.length === 0 && (
                     <View style={styles.noChatsContainer}>
-                        <Text style={styles.noChatsText}>No chats found 🙃</Text>
+                        <Text style={styles.noChatsText}>No Profile Visitors Yet 🙃</Text>
                     </View>
                 )
             }
