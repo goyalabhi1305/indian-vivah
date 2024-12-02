@@ -31,32 +31,33 @@ const Step3 = () => {
         weight: '',
     });
 
-  const {data:formFetchedData, isLoading} = useSWR('getOnboardData');
+    const { data: formFetchedData, isLoading } = useSWR('getOnboardData');
 
 
-  useEffect(() => {
-    if(formFetchedData){
-        setFormData({
-            education: formFetchedData.education,
-            aboutCareer: formFetchedData.aboutCareer,
-            otherThings: formFetchedData.otherThings,
-            income: formFetchedData?.salary ? JSON.stringify(formFetchedData.salary || '') : null,
-            company: formFetchedData?.occupation?.company,
-            officeLocation: formFetchedData?.occupation?.officeLocation,
-            position: formFetchedData?.occupation?.position,
-            linkedinProfile: formFetchedData.linkedinProfile,
-            height: formFetchedData.height,
-            diet: formFetchedData.diet,
-            complexion: formFetchedData.complexion,
-            bio: formFetchedData.bio,
-            weight: formFetchedData?.weight ? JSON.stringify(formFetchedData.weight || '') : null
+    useEffect(() => {
+        if (formFetchedData) {
+            setFormData({
+                education: formFetchedData.education,
+                aboutCareer: formFetchedData.aboutCareer,
+                otherThings: formFetchedData.otherThings,
+                income: formFetchedData?.salary ? JSON.stringify(formFetchedData.salary || '') : null,
+                company: formFetchedData?.occupation?.company,
+                officeLocation: formFetchedData?.occupation?.officeLocation,
+                position: formFetchedData?.occupation?.position,
+                linkedinProfile: formFetchedData.linkedinProfile,
+                height: formFetchedData.height,
+                diet: formFetchedData.diet,
+                complexion: formFetchedData.complexion,
+                bio: formFetchedData.bio,
+                weight: formFetchedData?.weight ? JSON.stringify(formFetchedData.weight || '') : null
             })
-    }
+        }
     }, [formFetchedData]);
 
     const [loading, setLoading] = useState(false);
     const [openHeight, setOpenHeight] = useState(false);
     const [openDiet, setOpenDiet] = useState(false);
+    const [openComplexion, setOpenComplexion] = useState(false);
 
     const [errors, setErrors] = useState({});
 
@@ -66,6 +67,26 @@ const Step3 = () => {
         { label: 'Vegetarian', value: 'VEG' },
         { label: 'Non-Vegetarian', value: 'NON_VEG' }
     ];
+
+    const complexions = [
+        { value: "fair", label: "Fair" },
+        { value: "light-wheatish", label: "Light Wheatish" },
+        { value: "medium-wheatish", label: "Medium Wheatish" },
+        { value: "dusky-wheatish", label: "Dusky Wheatish" },
+        { value: "golden-wheatish", label: "Golden Wheatish" },
+        { value: "light-dusky", label: "Light Dusky" },
+        { value: "rich-dusky", label: "Rich Dusky" },
+        { value: "olive-brown", label: "Olive Brown" },
+        { value: "caramel", label: "Caramel" },
+        { value: "light-brown", label: "Light Brown" },
+        { value: "medium-brown", label: "Medium Brown" },
+        { value: "deep-brown", label: "Deep Brown" },
+        { value: "chocolate-brown", label: "Chocolate Brown" },
+        { value: "ebony", label: "Ebony" },
+        { value: "deep-dark", label: "Deep Dark" },
+        { value: "mahogany", label: "Mahogany" },
+        { value: "jet-black-brown", label: "Jet Black Brown" }
+      ];
 
     for (let feet = 4; feet <= 7; feet++) {
         for (let inches = 0; inches < 12; inches++) {
@@ -94,111 +115,111 @@ const Step3 = () => {
 
     const handleContinue = async () => {
 
-        if(validateFields(formData)){
-        try {
+        if (validateFields(formData)) {
+            try {
 
-            setLoading(true);
+                setLoading(true);
 
-            const payload = {
-                education: formData.education,
-                aboutCareer: formData.aboutCareer,
-                otherThings: formData.otherThings,
-                salary: formData.income,
-                occupation: {
-                    company: formData.company,
-                    officeLocation: formData.officeLocation,
-                    position: formData.position,
-                },
-                height: formData.height?.id,
-                diet: formData.diet,
-                complexion: formData.complexion,
-                bio: formData.bio,
-                weight: formData.weight,
-            };
+                const payload = {
+                    education: formData.education,
+                    aboutCareer: formData.aboutCareer,
+                    otherThings: formData.otherThings,
+                    salary: formData.income,
+                    occupation: {
+                        company: formData.company,
+                        officeLocation: formData.officeLocation,
+                        position: formData.position,
+                    },
+                    height: formData.height?.id,
+                    diet: formData.diet,
+                    complexion: formData.complexion,
+                    bio: formData.bio,
+                    weight: formData.weight,
+                };
 
-            if(formData.linkedinProfile?.length > 0){
-                payload.linkedinProfile = formData.linkedinProfile;
+                if (formData.linkedinProfile?.length > 0) {
+                    payload.linkedinProfile = formData.linkedinProfile;
+                }
+
+                const response = await UserOnBoard(payload);
+
+                router.push('userDetails/step4');
+
+
+                setLoading(false);
+
+            } catch (e) {
+                setLoading(false);
+                console.log(e);
             }
-
-            const response = await UserOnBoard(payload);
-
-      router.push('userDetails/step4');
-
-
-            setLoading(false);
-
-        } catch (e) {
-            setLoading(false);
-            console.log(e);
         }
-    }
     };
 
     const validateFields = (formData) => {
         const errors = {};
-      
+
         if (!formData.education) {
-          errors.education = 'Education is required.';
+            errors.education = 'Education is required.';
         }
-      
+
         if (!formData.aboutCareer) {
-          errors.aboutCareer = 'About Career is required.';
+            errors.aboutCareer = 'About Career is required.';
         }
 
         if (!formData.weight) {
             errors.weight = 'Weight is required.';
-            }
-      
+        }
+
 
         if (!formData.income) {
-          errors.income = 'Income is required.';
+            errors.income = 'Income is required.';
         }
-      
+
         if (!formData.company) {
-          errors.company = 'Company is required.';
+            errors.company = 'Company is required.';
         }
-      
+
         if (!formData.officeLocation) {
-          errors.officeLocation = 'Office Location is required.';
+            errors.officeLocation = 'Office Location is required.';
         }
-      
+
         if (!formData.position) {
-          errors.position = 'Position is required.';
+            errors.position = 'Position is required.';
         }
-      
+
         // if (!formData.linkedinProfile) {
         //   errors.linkedinProfile = 'LinkedIn Profile is required.';
         // }
 
-        if(
+        if (
             formData.linkedinProfile &&
-            !formData.linkedinProfile.match(/^(https?:\/\/)?([\w]+\.)?linkedin\.com\/.+$/)){
+            !formData.linkedinProfile.match(/^(https?:\/\/)?([\w]+\.)?linkedin\.com\/.+$/)) {
             errors.linkedinProfile = 'Invalid LinkedIn Profile URL';
         }
-      
+
         if (!formData.height?.id) {
-          errors.height = 'Height is required.';
+            errors.height = 'Height is required.';
         }
-      
+
         if (!formData.diet) {
-          errors.diet = 'Diet is required.';
+            errors.diet = 'Diet is required.';
         }
-      
+
         if (!formData.complexion) {
-          errors.complexion = 'Complexion is required.';
+            errors.complexion = 'Complexion is required.';
         }
-      
+
         if (!formData.bio) {
-          errors.bio = 'Bio is required.';
+            errors.bio = 'Bio is required.';
         }
 
         console.log(errors);
-      
+
         setErrors(errors);
         return Object.keys(errors).length === 0;
-      };
-      
-      console.log('Form Data:', formData);
+    };
+
+    console.log('Form Data:', formData);
 
     return (
         <AutocompleteDropdownContextProvider headerOffset={headerHeight} >
@@ -215,6 +236,7 @@ const Step3 = () => {
                                 onSelectItem={(item) => {
                                     handleInputChange('height', item)
                                 }}
+                                value={formData.height}
                                 dataSet={heightItems}
                                 inputContainerStyle={{
                                     backgroundColor: '#fff3f4',
@@ -408,12 +430,27 @@ const Step3 = () => {
                         <FieldHelperText error={errors.bio} />
 
 
-                        <TextInput
-                            label="Complexion"
-                            mode="outlined"
+                        <DropDownPicker
+                            open={openComplexion}
                             value={formData.complexion}
-                            onChangeText={(text) => handleInputChange('complexion', text)}
-                            style={styles.input}
+                            items={complexions}
+                            style={{
+                                backgroundColor: '#fff3f4',
+                                marginBottom: 10,
+                                marginTop: 10,
+                                zIndex: 1,
+                                backgroundColor: '#fff3f4',
+                            }}
+
+                            setOpen={setOpenComplexion}
+                            setValue={(callback) => {
+                                const value = typeof callback === 'function' ? callback(formData.gender) : callback;
+                                handleInputChange('complexion', value);
+                                console.log('Selected Age:', value);
+                            }}
+                            // setItems={setGenderItems}
+                            listMode="SCROLLVIEW"
+                            placeholder="Select Complexion"
                         />
 
                         <FieldHelperText error={errors.complexion} />
