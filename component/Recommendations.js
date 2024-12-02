@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import useSWR from "swr";
+import { GetRandomUser } from "../services/endpoint";
+import ProfileCard from "./Card/ProfileCard";
 
 const Recommendations = ({ setActiveComponent }) => {
   const [showAll, setShowAll] = useState(false);
@@ -8,14 +11,18 @@ const Recommendations = ({ setActiveComponent }) => {
     name: `Name ${index + 1}`,
   }));
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() => setActiveComponent("profile")}
-    >
-      <Text>{item.name}</Text>
-    </TouchableOpacity>
+  const fetcher = async () => {
+    const response = await GetRandomUser();
+    return response.data?.data;
+  }
+
+  const { data, error, isLoading } = useSWR("recommendations", fetcher)
+
+
+  const renderCard = ({ item }) => (
+    <ProfileCard item={item} />
   );
+
 
   return (
     <View style={styles.container}>
@@ -32,20 +39,26 @@ const Recommendations = ({ setActiveComponent }) => {
 
       {/* Force FlatList re-render by updating the `key` prop */}
       <FlatList
-        key={showAll ? "grid" : "list"} // Changes the key based on layout
-        data={showAll ? recommendations : recommendations.slice(0, 4)}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        numColumns={showAll ? 2 : 1} // Change layout dynamically
-        columnWrapperStyle={showAll && styles.columnWrapper}
+        // key={showAll ? "grid" : "list"} // Changes the key based on layout
+        data={showAll ? data : data?.slice(0, 2)}
+        renderItem={renderCard}
+        keyExtractor={(item) => item._id}
+        // numColumns={showAll ? 2 : 1} // Change layout dynamically
+        // columnWrapperStyle={showAll && styles.columnWrapper}
+        showsVerticalScrollIndicator={false}
+        
       />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  header: { flexDirection: "row", justifyContent: "space-between", marginBottom: 10 },
+  container: { flex: 1,
+    width: "100%",
+   },
+  header: { flexDirection: "row", justifyContent: "space-between", marginBottom: 10,
+    paddingHorizontal:15
+   },
   link: { color: "blue",
     marginTop: 10
    },
