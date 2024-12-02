@@ -168,6 +168,7 @@ const QuickSearch = () => {
   const handleApply = async () => {
     try {
 
+      setIsLoading(true);
       const payload = {
         religion: formData.religion,
         caste: formData.caste,
@@ -182,9 +183,12 @@ const QuickSearch = () => {
       
       setShowCards(true);
 
+      setIsLoading(false);
+
 
 
     } catch (error) {
+      setIsLoading(false);
       console.log(error);
     }
   }
@@ -197,6 +201,14 @@ const QuickSearch = () => {
           // Show Cards when `showCards` is true
           <>
             <Text style={styles.title}>Quick Search Results</Text>
+
+            {
+              cards.length === 0 && (
+                <View style={styles.noChatsContainer}>
+                  <Text style={styles.noChatsText}>No profiles found 🙃</Text>
+                </View>
+              )
+            }
 
             <FlatList
               data={cards}
@@ -360,6 +372,8 @@ const QuickSearch = () => {
             </View>
             <Button
               mode="contained"
+              loading={isLoading}
+              disabled={isLoading}
               onPress={handleApply} >
               Search
             </Button>
@@ -411,6 +425,16 @@ const styles = StyleSheet.create({
   picker: {
     height: 50, // Height of the picker
     color: '#000', // Text color
+  },
+  noChatsContainer: {
+    alignItems: 'center',
+    marginTop: 200
+  },
+  noChatsText: {
+    fontWeight: '600',
+    fontSize: 24,
+    letterSpacing: 1,
+    color: '#333',
   },
 });
 
