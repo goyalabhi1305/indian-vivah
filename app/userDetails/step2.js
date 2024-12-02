@@ -348,9 +348,9 @@ const Step2 = () => {
     }
   
     // Validate horoscope
-    if (!formData?.horoscope) {
-      newErrors.horoscope = 'Horoscope is required.';
-    }
+    // if (!formData?.horoscope) {
+    //   newErrors.horoscope = 'Horoscope is required.';
+    // }
   
     console.log('Errors:', newErrors);
     setErrors(newErrors);
@@ -388,7 +388,7 @@ const Step2 = () => {
           />
         </View>
         <FieldHelperText error={errors.maritalStatus} />
-        <TextInput
+        {/* <TextInput
           label="Horoscope"
           mode="outlined"
           value={formData.horoscope}
@@ -402,7 +402,7 @@ const Step2 = () => {
             handleInputChange('horoscope', text)}}
           style={styles.input}
         />
-        <FieldHelperText error={errors.horoscope} />
+        <FieldHelperText error={errors.horoscope} /> */}
 
         {/* Current Address */}
         <Text style={styles.subHeader}>Current Address</Text>
