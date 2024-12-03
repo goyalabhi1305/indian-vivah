@@ -13,119 +13,127 @@ import PremiumMembership from '../component/PremiumComponent';
 import ActivityComponent from '../component/ActivityComponent';
 import SelfProfileComponent from '../component/SelfProfileComponent';
 import HeaderLeftComponent from '../component/HeaderLeftComponent';
+import {
+	IconCards,
+	IconCardsFilled,
+	IconClock,
+	IconCrown,
+	IconUserCircle,
+} from '@tabler/icons-react-native';
 
 const Tab = createBottomTabNavigator();
 
 export default function MyComponent() {
-  const router = useRouter();
-  return (
+	const router = useRouter();
+	return (
+		<Tab.Navigator
+			screenOptions={{
+				headerShown: true,
+				tabBarActiveTintColor: '#ff4f4f',
+				tabBarInactiveTintColor: '#000',
 
-    <Tab.Navigator
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: '#ff4f4f',
-        tabBarInactiveTintColor: '#000',
-      }}
-      tabBar={({ navigation, state, descriptors, insets }) => (
-        <BottomNavigation.Bar
-          navigationState={state}
-          safeAreaInsets={insets}
+				headerTitle: 'Matches',
+			}}
+			tabBar={({ navigation, state, descriptors, insets }) => (
+				<BottomNavigation.Bar
+					navigationState={state}
+					safeAreaInsets={insets}
+					// make z-index low
+					style={{
+						elevation: 10,
+						zIndex: 0,
+						borderWidth: 0.5,
+						borderColor: '#ddd',
+						borderStyle: 'solid',
+						borderRadius: 20,
+						overflow: 'hidden',
+						backgroundColor: '#FFF3F4',
+					}}
+					onTabPress={({ route, preventDefault }) => {
+						const event = navigation.emit({
+							type: 'tabPress',
+							target: route.key,
+							canPreventDefault: true,
+						});
 
-          // make z-index low
-          style={{
-            elevation: 0, zIndex: 0,
-            backgroundColor: '#FFF3F4',
-          }}
+						if (event.defaultPrevented) {
+							preventDefault();
+						} else {
+							navigation.dispatch({
+								...CommonActions.navigate(route.name, route.params),
+								target: state.key,
+							});
+						}
+					}}
+					renderIcon={({ route, focused, color }) => {
+						const { options } = descriptors[route.key];
+						if (options.tabBarIcon) {
+							return options.tabBarIcon({ focused, color, size: 24 });
+						}
 
-          onTabPress={({ route, preventDefault }) => {
-            const event = navigation.emit({
-              type: 'tabPress',
-              target: route.key,
-              canPreventDefault: true,
-            });
+						return null;
+					}}
+					getLabelText={({ route }) => {
+						const { options } = descriptors[route.key];
+						const label =
+							options.tabBarLabel !== undefined
+								? options.tabBarLabel
+								: options.title !== undefined
+								? options.title
+								: route.title;
 
-            if (event.defaultPrevented) {
-              preventDefault();
-            } else {
-              navigation.dispatch({
-                ...CommonActions.navigate(route.name, route.params),
-                target: state.key,
-              });
-            }
-          }}
-          renderIcon={({ route, focused, color }) => {
-            const { options } = descriptors[route.key];
-            if (options.tabBarIcon) {
-              return options.tabBarIcon({ focused, color, size: 24 });
-            }
+						return label;
+					}}
+				/>
+			)}
+		>
+			<Tab.Screen
+				name='Matches'
+				component={HomeScreen}
+				options={{
+					tabBarLabel: 'Matches',
+					headerShown: true,
+					headerStyle: {
+						backgroundColor: '#FFF3F4',
+						height: 120,
+					},
 
-            return null;
-          }}
-          getLabelText={({ route }) => {
-            const { options } = descriptors[route.key];
-            const label =
-              options.tabBarLabel !== undefined
-                ? options.tabBarLabel
-                : options.title !== undefined
-                  ? options.title
-                  : route.title;
+					// headerTintColor: '#fff',
+					headerTitleStyle: {},
+					tabBarIcon: ({ color, size, focused }) => {
+						if (focused) {
+							return <IconCardsFilled color={'red'} stroke={2} />;
+						} else return <IconCards color={color} />;
+					},
+					headerRight: () => (
+						<View style={{ flexDirection: 'row' }}>
+							<TouchableOpacity
+								activeOpacity={0.7}
+								onPress={() => router.push('Search')}
+							>
+								<Icon name='magnify' size={24} style={{ marginRight: 20 }} />
+							</TouchableOpacity>
+							<TouchableOpacity
+								activeOpacity={0.7}
+								onPress={() => router.push('Message')}
+							>
+								<Icon name='chat' size={24} style={{ marginRight: 20 }} />
+							</TouchableOpacity>
 
-            return label;
-          }}
-        />
-      )}
-    >
-      <Tab.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          tabBarLabel: 'Home',
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: '#ff4f4f',
-            height: 60
-          },
+							<TouchableOpacity
+								activeOpacity={0.7}
+								onPress={() => router.push('Notification')}
+							>
+								<Icon name='bell' size={24} style={{ marginRight: 20 }} />
+							</TouchableOpacity>
+						</View>
+					),
+					headerTitle: 'Matches',
 
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-          tabBarIcon: ({ color, size }) => {
-            return <Icon name="home" size={size} color={color} />;
-          },
-          headerRight: () => (
-            <View
-              style={{ flexDirection: 'row' }}
-            >
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => router.push('Search')}
-              >
-                <Icon name="magnify" size={24} color="#fff" style={{ marginRight: 20 }} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => router.push('Message')}
-              >
-                <Icon name="chat" size={24} color="#fff" style={{ marginRight: 20 }} />
-              </TouchableOpacity>
-
-
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => router.push('Notification')}
-              >
-                <Icon name="bell" size={24} color="#fff" style={{ marginRight: 20 }} />
-              </TouchableOpacity>
-            </View>
-          ),
-          headerTitle: '',
-          headerLeft: () => (
-            <HeaderLeftComponent />
-          ),
-        }}
-      />
-      {/* <Tab.Screen
+					headerLeft: () => <HeaderLeftComponent />,
+				}}
+			/>
+			{/* <Tab.Screen
         name="Message"
         component={MessageScreen}
         options={{
@@ -180,98 +188,101 @@ export default function MyComponent() {
           ),
         }}
       /> */}
-      <Tab.Screen
-        name="Activity"
-        component={ActivityScreen}
-        options={{
-          tabBarLabel: 'Activity',
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: '#ff4f4f',
-            height: 60
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-          tabBarIcon: ({ color, size }) => {
-            return <Icon name="pulse" size={size} color={color} />;
-          },
-          headerRight: () => (
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => router.push('Notification')}
-            >
-              <Icon name="bell" size={24} color="#fff" style={{ marginRight: 20 }} />
-            </TouchableOpacity>
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="My Profile"
-        component={ProfileScreen}
-        options={{
-          tabBarLabel: 'My Profile',
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: '#ff4f4f',
-            height: 60
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-          tabBarIcon: ({ color, size }) => {
-            return <Icon name="account" size={size} color={color} />;
-          },
-          headerRight: () => (
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => router.push('Notification')}
-            >
-              <Icon name="bell" size={24} color="#fff" style={{ marginRight: 20 }} />
-            </TouchableOpacity>
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Premium"
-        component={PremiumScreen}
-        options={{
-          tabBarLabel: 'Premium',
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: '#ff4f4f',
-            height: 60
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-          tabBarIcon: ({ color, size }) => {
-            return <Icon name="star" size={size} color={color} />;
-          },
-          headerRight: () => (
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => router.push('Notification')}
-            >
-              <Icon name="bell" size={24} color="#fff" style={{ marginRight: 20 }} />
-            </TouchableOpacity>
-          ),
-        }}
-      />
-    </Tab.Navigator>
+			<Tab.Screen
+				name='Activity'
+				component={ActivityScreen}
+				options={{
+					tabBarLabel: 'Activity',
+					headerShown: true,
+					headerStyle: {
+						height: 120,
+						backgroundColor: '#FFF3F4',
+					},
 
-  );
+					headerTitleStyle: {
+						fontWeight: 'bold',
+					},
+
+					tabBarIcon: ({ color, size }) => {
+						return <IconClock name='pulse' color={color} />;
+					},
+					headerTitle: 'Activity',
+					headerRight: () => (
+						<TouchableOpacity
+							activeOpacity={0.7}
+							onPress={() => router.push('Notification')}
+						>
+							<Icon
+								name='bell'
+								size={24}
+								// color='#fff'
+								style={{ marginRight: 20 }}
+							/>
+						</TouchableOpacity>
+					),
+				}}
+			/>
+			<Tab.Screen
+				name='My Profile'
+				component={ProfileScreen}
+				options={{
+					tabBarLabel: 'My Profile',
+					headerShown: true,
+					headerStyle: {
+						backgroundColor: '#FFF3F4',
+						height: 120,
+					},
+					headerTitleStyle: {
+						// fontWeight: 'bold',
+					},
+					tabBarIcon: ({ color, size }) => {
+						return <IconUserCircle size={size} color={color} />;
+					},
+					headerTitle: 'My Profile',
+					headerRight: () => (
+						<TouchableOpacity
+							activeOpacity={0.7}
+							onPress={() => router.push('Notification')}
+						>
+							<Icon name='bell' size={24} style={{ marginRight: 20 }} />
+						</TouchableOpacity>
+					),
+				}}
+			/>
+			<Tab.Screen
+				name='Premium'
+				component={PremiumScreen}
+				options={{
+					tabBarLabel: 'Premium',
+					headerShown: true,
+					headerStyle: {
+						backgroundColor: '#FFF3F4',
+						height: 120,
+					},
+					headerTitle: 'Premium',
+					tabBarIcon: ({ color, size }) => {
+						return <IconCrown size={size} color={color} />;
+					},
+					headerRight: () => (
+						<TouchableOpacity
+							activeOpacity={0.7}
+							onPress={() => router.push('Notification')}
+						>
+							<Icon name='bell' size={24} style={{ marginRight: 20 }} />
+						</TouchableOpacity>
+					),
+				}}
+			/>
+		</Tab.Navigator>
+	);
 }
 
 function HomeScreen() {
-  return (
-    <View style={styles.container}>
-      <HomeComponent />
-    </View>
-  );
+	return (
+		<View style={styles.container}>
+			<HomeComponent />
+		</View>
+	);
 }
 
 // function MessageScreen() {
@@ -291,34 +302,34 @@ function HomeScreen() {
 // }
 
 function ActivityScreen() {
-  return (
-    <View style={styles.container}>
-      <ActivityComponent />
-    </View>
-  );
+	return (
+		<View style={styles.container}>
+			<ActivityComponent />
+		</View>
+	);
 }
 
 function ProfileScreen() {
-  return (
-    // <View style={styles.container}>
-    <SelfProfileComponent />
-    // </View>
-  );
+	return (
+		// <View style={styles.container}>
+		<SelfProfileComponent />
+		// </View>
+	);
 }
 
 function PremiumScreen() {
-  return (
-    <View style={styles.container}>
-      <PremiumMembership />
-    </View>
-  );
+	return (
+		<View style={styles.container}>
+			<PremiumMembership />
+		</View>
+	);
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FFF3F4',
-  },
+	container: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: '#FFF3F4',
+	},
 });
