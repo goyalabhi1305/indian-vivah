@@ -53,7 +53,7 @@ const App = () => {
 
 	return (
 		<>
-			<StatusBar barStyle='dark-content' />
+			<StatusBar  />
 			<View style={styles.container}>
 				<Image
 					source={images.AppLogo}

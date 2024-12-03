@@ -223,7 +223,6 @@ const Step3 = () => {
 
     return (
         <AutocompleteDropdownContextProvider headerOffset={headerHeight} >
-            <Provider>
                 <ScrollView style={styles.container}>
                     <Text style={styles.headerText}>Tell us about yourself</Text>
                     <View style={styles.formContainer}>
@@ -344,7 +343,9 @@ const Step3 = () => {
 
                         <FieldHelperText error={errors.income} />
 
-                        <View style={styles.input}>
+                        <View style={[styles.input,
+                            { zIndex: openDiet ? 2000 : 1 }
+                        ]}>
                             <DropDownPicker
                                 open={openDiet}
                                 value={formData.diet}
@@ -356,6 +357,11 @@ const Step3 = () => {
                                     handleInputChange('diet', value);
                                     console.log('Selected Gender:', value);
                                 }}
+                                dropDownContainerStyle={{
+                                    zIndex: 2000,
+                                    borderColor: '#d0d0d0',
+                                    backgroundColor: '#ffffff',
+                                  }}
 
                                 style={{
                                     backgroundColor: '#fff3f4',
@@ -471,7 +477,6 @@ const Step3 = () => {
                         </Button>
                     </View>
                 </ScrollView>
-            </Provider>
         </AutocompleteDropdownContextProvider>
     );
 };

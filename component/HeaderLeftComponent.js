@@ -56,11 +56,22 @@ const HeaderLeftComponent = () => {
                     zIndex: 1005,
                     padding: 10,
                     paddingRight: 20,
-                    paddingLeft: 5
+                    paddingLeft: 5,
+                    display: 'flex',
+                    flexDirection: 'row',
+                    gap: 20,
+                    alignItems: 'center',
                 }}
                 onPress={toggleDrawer}
             >
                 <Icon name="menu" size={24} style={{ marginLeft: 20 }} />
+                <Text
+                style={{
+                    color: '#000',
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                }}
+                >Matches</Text>
             </TouchableOpacity>
 
             {/* Overlay - TouchableWithoutFeedback to close the drawer */}

@@ -49,8 +49,6 @@ export default function RootLayout() {
 	return (
 		<GlobalProvider>
 			<PaperProvider theme={theme}>
-				{/* <ToastManager/> */}
-				<Toast />
 				<Stack
 					screenOptions={{
 						headerShown: true,
@@ -77,7 +75,7 @@ export default function RootLayout() {
 						name='index'
 						options={{
 							headerShown: false,
-							// title: 'Home', // Optional: Customize the header title
+							title: 'Home', // Optional: Customize the header title
 						}}
 					/>
 					<Stack.Screen name='(auth)/SignIn' options={{ headerShown: false }} />
@@ -228,6 +226,9 @@ export default function RootLayout() {
 						}}
 					/>
 				</Stack>
+				<Toast />
+				<ToastManager/>
+
 			</PaperProvider>
 		</GlobalProvider>
 	);

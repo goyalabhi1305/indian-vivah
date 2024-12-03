@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
-
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { CommonActions } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Text, BottomNavigation } from 'react-native-paper';
@@ -17,8 +16,12 @@ import {
 	IconCards,
 	IconCardsFilled,
 	IconClock,
+	IconClockFilled,
 	IconCrown,
+	IconUser,
 	IconUserCircle,
+	IconUserCircleFilled,
+	IconUserFilled,
 } from '@tabler/icons-react-native';
 
 const Tab = createBottomTabNavigator();
@@ -31,17 +34,16 @@ export default function MyComponent() {
 				headerShown: true,
 				tabBarActiveTintColor: '#ff4f4f',
 				tabBarInactiveTintColor: '#000',
-
-				headerTitle: 'Matches',
+				headerTitle: '',
+				zIndex: -1, // Reduced z-index for tabs
 			}}
 			tabBar={({ navigation, state, descriptors, insets }) => (
 				<BottomNavigation.Bar
 					navigationState={state}
 					safeAreaInsets={insets}
-					// make z-index low
 					style={{
 						elevation: 10,
-						zIndex: 0,
+						zIndex: 1, // Make sure the tab bar is below the menu (lower z-index)
 						borderWidth: 0.5,
 						borderColor: '#ddd',
 						borderStyle: 'solid',
@@ -97,12 +99,9 @@ export default function MyComponent() {
 						backgroundColor: '#FFF3F4',
 						height: 120,
 					},
-
-					// headerTintColor: '#fff',
-					headerTitleStyle: {},
 					tabBarIcon: ({ color, size, focused }) => {
 						if (focused) {
-							return <IconCardsFilled color={'red'} stroke={2} />;
+							return <IconCardsFilled color={color} />;
 						} else return <IconCards color={color} />;
 					},
 					headerRight: () => (
@@ -128,66 +127,10 @@ export default function MyComponent() {
 							</TouchableOpacity>
 						</View>
 					),
-					headerTitle: 'Matches',
-
+					headerTitle: '',
 					headerLeft: () => <HeaderLeftComponent />,
 				}}
 			/>
-			{/* <Tab.Screen
-        name="Message"
-        component={MessageScreen}
-        options={{
-          tabBarLabel: 'Message',
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: '#ff4f4f',
-            height: 60
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-          tabBarIcon: ({ color, size }) => {
-            return <Icon name="message" size={size} color={color} />;
-          },
-          headerRight: () => (
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => router.push('Notification')}
-            >
-              <Icon name="bell" size={24} color="#fff" style={{ marginRight: 20 }} />
-            </TouchableOpacity>
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Search"
-        component={SearchScreen}
-        options={{
-          tabBarLabel: 'Search',
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: '#ff4f4f',
-            height: 60
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-          tabBarIcon: ({ color, size }) => {
-            return <Icon name="magnify" size={size} color={color} />;
-          },
-
-          headerRight: () => (
-            <TouchableOpacity
-              activeOpacity={0.7}
-              onPress={() => router.push('Notification')}
-            >
-              <Icon name="bell" size={24} color="#fff" style={{ marginRight: 20 }} />
-            </TouchableOpacity>
-          ),
-        }}
-      /> */}
 			<Tab.Screen
 				name='Activity'
 				component={ActivityScreen}
@@ -198,13 +141,11 @@ export default function MyComponent() {
 						height: 120,
 						backgroundColor: '#FFF3F4',
 					},
-
-					headerTitleStyle: {
-						fontWeight: 'bold',
-					},
-
-					tabBarIcon: ({ color, size }) => {
-						return <IconClock name='pulse' color={color} />;
+					tabBarIcon: ({ color, size, focused }) => {
+						if (focused) {
+							return <IconClockFilled color={color} />;
+						}
+						return <IconClock color={color} />;
 					},
 					headerTitle: 'Activity',
 					headerRight: () => (
@@ -215,7 +156,6 @@ export default function MyComponent() {
 							<Icon
 								name='bell'
 								size={24}
-								// color='#fff'
 								style={{ marginRight: 20 }}
 							/>
 						</TouchableOpacity>
@@ -232,11 +172,11 @@ export default function MyComponent() {
 						backgroundColor: '#FFF3F4',
 						height: 120,
 					},
-					headerTitleStyle: {
-						// fontWeight: 'bold',
-					},
-					tabBarIcon: ({ color, size }) => {
-						return <IconUserCircle size={size} color={color} />;
+					tabBarIcon: ({ color, size, focused }) => {
+						if (focused) {
+							return <IconUserCircle color={color} />;
+						}
+						return <IconUserCircle color={color} />;
 					},
 					headerTitle: 'My Profile',
 					headerRight: () => (
@@ -285,22 +225,6 @@ function HomeScreen() {
 	);
 }
 
-// function MessageScreen() {
-//   return (
-//     <View style={styles.container}>
-//       <MessageComponent />
-//     </View>
-//   );
-// }
-
-// function SearchScreen() {
-//   return (
-//     <View style={styles.container}>
-//       <SearchComponent />
-//     </View>
-//   );
-// }
-
 function ActivityScreen() {
 	return (
 		<View style={styles.container}>
@@ -311,9 +235,7 @@ function ActivityScreen() {
 
 function ProfileScreen() {
 	return (
-		// <View style={styles.container}>
 		<SelfProfileComponent />
-		// </View>
 	);
 }
 

@@ -6,6 +6,7 @@ import images from '../../constants/images'
 import { mutate } from 'swr'
 import { AcceptFriendRequest, SendFriendRequest, ShortListUser } from '../../services/endpoint'
 import Toast from 'react-native-toast-message'
+import errorMsg from '../../utils/errorMsg'
 
 const ProfileCard = ({ item , cardType= 'normal',
     friendReqId = null
@@ -42,6 +43,9 @@ const ProfileCard = ({ item , cardType= 'normal',
     }
 
     const handleSendInterest = async (id) => {
+
+       
+      
         try {
             setLoadingInterest(true)
 
@@ -54,6 +58,9 @@ const ProfileCard = ({ item , cardType= 'normal',
             await mutate('sent')
 
             setLoadingInterest(false)
+
+            
+
             Toast.show({
                 type: 'success',
                 text1: 'Interest Sent'
@@ -63,7 +70,7 @@ const ProfileCard = ({ item , cardType= 'normal',
             setLoadingInterest(false)
             Toast.show({
                 type: 'error',
-                text1: 'Unable to send interest'
+                text1: errorMsg(error) || 'Unable to send interest'
             })
 
             console.log(error)
@@ -230,7 +237,10 @@ const ProfileCard = ({ item , cardType= 'normal',
                     />
                     <Card.Actions
                     style={{
-                        paddingBottom: 0,
+                        paddingBottom: 10,
+                        backgroundColor: 'rgba(0,0,0,0.4)',
+                        borderBottomLeftRadius: 30,
+                        borderBottomRightRadius: 30,
                     }}
                     >
                        {
@@ -346,11 +356,8 @@ const ProfileCard = ({ item , cardType= 'normal',
                     </View>
                        }
                     </Card.Actions>
-                    <Card.Actions>
-
-                    </Card.Actions>
                 </Card>
-            </TouchableOpacity>;
+            </TouchableOpacity>
 
         </View>
     )

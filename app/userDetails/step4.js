@@ -312,304 +312,265 @@ const Step3 = () => {
 
     return (
         <ScrollView style={styles.container}>
-            <Text style={styles.headerText}>Tell us about yourself</Text>
-            <View style={styles.formContainer}>
-                <Text style={styles.subHeader2}>Choose Hobbies</Text>
-                <View style={styles.chipContainer}>
-                    {hobbies.map((hobby) => (
-                        <Chip
-                            key={hobby.id}
-                            mode="outlined"
-                            selected={formData.hobbies.includes(hobby.name)}
-                            onPress={() => {
-                                setErrors((prev) => ({ ...prev, hobbies: '' }));
-
-
-                                handleChipSelection('hobbies', hobby.name)}}
-                        >
-                            {hobby.name}
-                        </Chip>
-                    ))}
+        <Text style={styles.headerText}>Tell us about yourself</Text>
+        <View style={styles.formContainer}>
+            <Text style={styles.subHeader2}>Choose Hobbies</Text>
+            <View style={styles.chipContainer}>
+                {hobbies.map((hobby) => (
+                    <Chip
+                        key={hobby.id}
+                        mode="outlined"
+                        selected={formData.hobbies.includes(hobby.name)}
+                        onPress={() => {
+                            setErrors((prev) => ({ ...prev, hobbies: '' }));
+                            handleChipSelection('hobbies', hobby.name);
+                        }}
+                    >
+                        {hobby.name}
+                    </Chip>
+                ))}
                 <FieldHelperText error={errors.hobbies} />
-                </View>
-
-
-
-                <Text style={styles.subHeader2}>Choose Interests</Text>
-                <View style={styles.chipContainer}>
-                    {interests.map((interest) => (
-                        <Chip
-                            key={interest.id}
-                            mode="outlined"
-                            selected={formData.interests.includes(interest.name)}
-                            onPress={() => {
-                                setErrors((prev) => ({ ...prev, interests: '' }));
-                                handleChipSelection('interests', interest.name)
-                            }}
-                        >
-                            {interest.name}
-                        </Chip>
-                    ))}
-
+            </View>
+    
+            <Text style={styles.subHeader2}>Choose Interests</Text>
+            <View style={styles.chipContainer}>
+                {interests.map((interest) => (
+                    <Chip
+                        key={interest.id}
+                        mode="outlined"
+                        selected={formData.interests.includes(interest.name)}
+                        onPress={() => {
+                            setErrors((prev) => ({ ...prev, interests: '' }));
+                            handleChipSelection('interests', interest.name);
+                        }}
+                    >
+                        {interest.name}
+                    </Chip>
+                ))}
                 <FieldHelperText error={errors.interests} />
-                </View> 
-                {/* Dropdowns */}
-                <Text style={styles.subHeader}>Manglik Status</Text>
-                {/* <Dropdown
-                    label="Select Manglik Status"
-                    data={manglikStatusArray}
-                    value={formData.manglikStatus}
-                    onChangeText={(value) => handleInputChange('manglikStatus', value)}
-                /> */}
-                <View style={styles.input}>
-                    <DropDownPicker
-                        open={openManglikStatus}
-                        value={formData.manglikStatus}
-                        items={manglikStatusArray}
-                        setOpen={setOpenManglikStatus}
+            </View>
+    
+            {/* Dropdowns */}
+            <Text style={styles.subHeader}>Manglik Status</Text>
+            <View style={[styles.input, { zIndex: openManglikStatus ? 2000 : 1 }]}>
+            <DropDownPicker
+                open={openManglikStatus}
+                value={formData.manglikStatus}
+                items={manglikStatusArray}
+                setOpen={setOpenManglikStatus}
+                setValue={(callback) => {
+                    const value = typeof callback === 'function' ? callback(formData.bloodGroup) : callback;
+                    handleInputChange('manglikStatus', value);
+                }}
+                placeholder="Select Manglik Status"
+                style={{ backgroundColor: '#fff3f4' }}
+            />
+            <FieldHelperText error={errors.manglikStatus} />
+        </View>
+    
+            <Text style={styles.subHeader}>Rashi</Text>
+            <TextInput
+                label="Rashi"
+                value={formData.rashi}
+                onChangeText={(value) => handleInputChange('rashi', value)}
+                mode="outlined"
+                style={styles.input}
+            />
+            <FieldHelperText error={errors.rashi} />
+    
+            <Text style={styles.subHeader}>Nakshatra</Text>
+            <TextInput
+                label="Nakshatra"
+                value={formData.nakshatra}
+                onChangeText={(value) => handleInputChange('nakshatra', value)}
+                mode="outlined"
+                style={styles.input}
+            />
+    
+            <Text style={styles.subHeader}>Mother Tongue</Text>
+            <TextInput
+                label="Mother Tongue"
+                value={formData.motherTongue}
+                onChangeText={(value) => handleInputChange('motherTongue', value)}
+                mode="outlined"
+                style={styles.input}
+            />
+            <FieldHelperText error={errors.motherTongue} />
+    
+            <Text style={styles.subHeader}>Brothers</Text>
+            <TextInput
+                label="Number of Brothers"
+                value={formData.brothers}
+                onChangeText={(value) => handleInputChange('brothers', value)}
+                keyboardType="numeric"
+                mode="outlined"
+                style={styles.input}
+            />
+            <FieldHelperText error={errors.brothers} />
+    
+            <Text style={styles.subHeader}>Sisters</Text>
+            <TextInput
+                label="Number of Sisters"
+                value={formData.sisters}
+                onChangeText={(value) => handleInputChange('sisters', value)}
+                keyboardType="numeric"
+                mode="outlined"
+                style={styles.input}
+            />
+            <FieldHelperText error={errors.sisters} />
+    
+            <Text style={styles.subHeader}>Father's Occupation</Text>
+            <TextInput
+                label="Father's Occupation"
+                value={formData.fatherOccupation}
+                onChangeText={(value) => handleInputChange('fatherOccupation', value)}
+                mode="outlined"
+                style={styles.input}
+            />
+            <FieldHelperText error={errors.fatherOccupation} />
+    
+            <Text style={styles.subHeader}>Mother's Occupation</Text>
+            <TextInput
+                label="Mother's Occupation"
+                value={formData.motherOccupation}
+                onChangeText={(value) => handleInputChange('motherOccupation', value)}
+                mode="outlined"
+                style={styles.input}
+            />
+            <FieldHelperText error={errors.motherOccupation} />
+    
+            <Text style={styles.subHeader}>Select Employed In Sector</Text>
+            <View style={[
+                styles.input, { zIndex: openEmployedInSector ? 2000 : 1 },
+            ]}>
+                <DropDownPicker
+                    open={openEmployedInSector}
+                    value={formData.employedInSector}
+                    items={employedInSectorArray}
+                    setOpen={setOpenEmployedInSector}
+                    style={{
+                        zIndex: 9999, // Increase zIndex to make sure dropdown is visible above other elements
+                        backgroundColor: '#fff3f4',
+                        position: 'relative',
+                    }}
 
-                        setValue={(callback) => {
-                            const value = typeof callback === 'function' ? callback(formData.bloodGroup) : callback;
-                            handleInputChange('manglikStatus', value);
-                            console.log('manglikStatus', value);
-                        }}
-                        placeholder="Select Manglik Status"
-
-                        style={{
-                            backgroundColor: '#fff3f4',
-                        }}
-
-                    />
-
-                    <FieldHelperText error={errors.manglikStatus} />
-                </View>
-
-                <Text style={styles.subHeader}>Rashi</Text>
 
 
-                <TextInput
-                    label="Rashi"
-                    value={formData.rashi}
-                    onChangeText={(value) => handleInputChange('rashi', value)}
-                    mode="outlined"
-                    style={styles.input}
+                    setValue={(callback) => {
+                        const value = typeof callback === 'function' ? callback(formData.bloodGroup) : callback;
+                        handleInputChange('employedInSector', value);
+                        console.log('employedInSector', value);
+                    }}
+                    placeholder="Select Smoking Habits"
+                    direction=""
                 />
-
-                <FieldHelperText error={errors.rashi} />
-
-                <Text style={styles.subHeader}>
-                    Nakshatra
-                </Text>
-
-
-                <TextInput
-                    label="Nakshatra"
-                    value={formData.nakshatra}
-                    onChangeText={(value) => handleInputChange('nakshatra', value)}
-                    mode="outlined"
-                    style={styles.input}
+                <FieldHelperText error={errors.employedInSector} />
+            </View>
+    
+            <Text style={styles.subHeader}>Disability</Text>
+            <View style={[styles.input,
+                { zIndex: openDisability ? 2000 : 1 },
+            ]}>
+                <DropDownPicker
+                    open={openDisability}
+                    value={formData.disability}
+                    items={disabilityArray}
+                    setOpen={setOpenDisability}
+                    style={{
+                        zIndex: 9999, // Increased zIndex
+                        backgroundColor: '#fff3f4',
+                        position: 'relative',
+                    }}
+                    setValue={(callback) => {
+                        const value = typeof callback === 'function' ? callback(formData.bloodGroup) : callback;
+                        handleInputChange('disability', value);
+                        console.log('drinkingHabits', value);
+                    }}
+                    placeholder="Select Disability"
+                    direction="BOTTOM"
                 />
-
-                <Text style={styles.subHeader}>Mother Tongue</Text>
-
-
-                <TextInput
-                    label="Mother Tongue"
-                    value={formData.motherTongue}
-                    onChangeText={(value) => handleInputChange('motherTongue', value)}
-                    mode="outlined"
-                    style={styles.input}
+                <FieldHelperText error={errors.disability} />
+            </View>
+    
+            <Text style={styles.subHeader}>Drinking Habits</Text>
+            <View style={[styles.input,
+                { zIndex: openDrinkingHabits ? 2000 : 1 },
+            ]}>
+                <DropDownPicker
+                    open={openDrinkingHabits}
+                    value={formData.drinkingHabits}
+                    items={drinkingHabitsArray}
+                    setOpen={setOpenDrinkingHabits}
+                    style={{
+                        zIndex: 9999, // Increased zIndex
+                        backgroundColor: '#fff3f4',
+                        position: 'relative',
+                    }}
+                    setValue={(callback) => {
+                        const value = typeof callback === 'function' ? callback(formData.bloodGroup) : callback;
+                        handleInputChange('drinkingHabits', value);
+                        console.log('drinkingHabits', value);
+                    }}
+                    placeholder="Select Drinking Habits"
+                    direction="BOTTOM"
                 />
-
-                <FieldHelperText error={errors.motherTongue} />
-
-
-                <Text style={styles.subHeader}>Brothers</Text>
-                <TextInput
-                    label="Number of Brothers"
-                    value={formData.brothers}
-                    onChangeText={(value) => handleInputChange('brothers', value)}
-                    keyboardType="numeric"
-                    mode="outlined"
-                    style={styles.input}
+                <FieldHelperText error={errors.drinkingHabits} />
+            </View>
+    
+            <Text style={styles.subHeader}>Family Type</Text>
+            <View style={[styles.input,
+                { zIndex: openFamilyType ? 2000 : 1 },
+            ]}>
+                <DropDownPicker
+                    open={openFamilyType}
+                    value={formData.familyType}
+                    items={familyTypeArray}
+                    setOpen={setOpenFamilyType}
+                    style={{
+                        zIndex: 9999, // Increased zIndex
+                        backgroundColor: '#fff3f4',
+                        position: 'relative',
+                    }}
+                    setValue={(callback) => {
+                        const value = typeof callback === 'function' ? callback(formData.bloodGroup) : callback;
+                        handleInputChange('familyType', value);
+                        console.log('familyType', value);
+                    }}
+                    placeholder="Select Family Type"
+                    direction=""
                 />
-
-                <FieldHelperText error={errors.brothers} />
-
-                <Text style={styles.subHeader}>Sisters</Text>
-
-                <TextInput
-                    label="Number of Sisters"
-                    value={formData.sisters}
-                    onChangeText={(value) => handleInputChange('sisters', value)}
-                    keyboardType="numeric"
-                    mode="outlined"
-                    style={styles.input}
+                <FieldHelperText error={errors.familyType} />
+            </View>
+    
+            <Text style={styles.subHeader}>Smoking Habits</Text>
+            <View style={[styles.input,
+                { zIndex: openSmoking ? 2000 : 1 },
+            ]}>
+                <DropDownPicker
+                    open={openSmoking}
+                    value={formData.smoking}
+                    items={smokingArray}
+                    setOpen={setOpenSmoking}
+                    style={{
+                        zIndex: 9999, // Increased zIndex
+                        backgroundColor: '#fff3f4',
+                        position: 'relative',
+                    }}
+                    setValue={(callback) => {
+                        const value = typeof callback === 'function' ? callback(formData.bloodGroup) : callback;
+                        handleInputChange('smoking', value);
+                        console.log('smoking', value);
+                    }}
+                    placeholder="Select Smoking Habits"
+                    direction=""
                 />
+                <FieldHelperText error={errors.smoking} />
+            </View>
 
-                <FieldHelperText error={errors.sisters} />
-
-                <Text style={styles.subHeader}>Father's Occupation</Text>
-
-                <TextInput
-                    label="Father's Occupation"
-                    value={formData.fatherOccupation}
-                    onChangeText={(value) => handleInputChange('fatherOccupation', value)}
-                    mode="outlined"
-                    style={styles.input}
-                />
-
-                <FieldHelperText error={errors.fatherOccupation} />
-
-                <Text style={styles.subHeader}>Mother's Occupation</Text>
-
-                <TextInput
-                    label="Mother's Occupation"
-                    value={formData.motherOccupation}
-                    onChangeText={(value) => handleInputChange('motherOccupation', value)}
-                    mode="outlined"
-                    style={styles.input}
-                />
-
-                <FieldHelperText error={errors.motherOccupation} />
-
-
-
-
-                <Text style={styles.subHeader}>
-                    Select Employed In Sector
-                </Text>
-
-                <View style={styles.input}>
-                    <DropDownPicker
-                        open={openEmployedInSector}
-                        value={formData.employedInSector}
-                        items={employedInSectorArray}
-                        setOpen={setOpenEmployedInSector}
-                        style={{
-                            zIndex: 1,
-                            backgroundColor: '#fff3f4',
-                        }}
-                        setValue={(callback) => {
-                            const value = typeof callback === 'function' ? callback(formData.bloodGroup) : callback;
-                            handleInputChange('employedInSector', value);
-                            console.log('employedInSector', value);
-                        }}
-                        placeholder="Select Smoking Habits"
-                        direction=""
-                    />
-
-                    <FieldHelperText error={errors.employedInSector} />
-                </View>
-
-
-                <Text style={styles.subHeader}>Disability</Text>
-
-                <View style={styles.input}>
-                    <DropDownPicker
-                        open={openDisability}
-                        value={formData.disability}
-                        items={disabilityArray}
-                        setOpen={setOpenDisability}
-                        style={{
-                            zIndex: 1,
-                            backgroundColor: '#fff3f4',
-                        }}
-                        setValue={(callback) => {
-                            const value = typeof callback === 'function' ? callback(formData.bloodGroup) : callback;
-                            handleInputChange('disability', value);
-                            console.log('drinkingHabits', value);
-                        }}
-                        placeholder="Select Disability"
-                        direction="BOTTOM"
-                    />
-
-                    <FieldHelperText error={errors.disability} />
-                </View>
-
-
-
-
-
-                <Text style={styles.subHeader}>Drinking Habits</Text>
-
-                <View style={styles.input}>
-                    <DropDownPicker
-                        open={openDrinkingHabits}
-                        value={formData.drinkingHabits}
-                        items={drinkingHabitsArray}
-                        setOpen={setOpenDrinkingHabits}
-                        style={{
-                            zIndex: 1,
-                            backgroundColor: '#fff3f4',
-                        }}
-                        setValue={(callback) => {
-                            const value = typeof callback === 'function' ? callback(formData.bloodGroup) : callback;
-                            handleInputChange('drinkingHabits', value);
-                            console.log('drinkingHabits', value);
-                        }}
-                        placeholder="Select Drinking Habits"
-                        direction="BOTTOM"
-                  
-                    />
-
-                    <FieldHelperText error={errors.drinkingHabits} />
-                </View>
-
-                <Text style={styles.subHeader}>
-                    Family Type
-                </Text>
-
-                <View style={styles.input}>
-                    <DropDownPicker
-                        open={openFamilyType}
-                        value={formData.familyType}
-                        items={familyTypeArray}
-                        setOpen={setOpenFamilyType}
-                        style={{
-                            zIndex: 1,
-                            backgroundColor: '#fff3f4',
-                        }}
-                        setValue={(callback) => {
-                            const value = typeof callback === 'function' ? callback(formData.bloodGroup) : callback;
-                            handleInputChange('familyType', value);
-                            console.log('familyType', value);
-                        }}
-                        placeholder="Select Family Type"
-                        direction=""
-                    />
-
-                    <FieldHelperText error={errors.familyType} />
-                </View>
-
-                <Text style={styles.subHeader}>
-                    Smoking Habits
-                </Text>
-
-                <View style={styles.input}>
-                    <DropDownPicker
-                        open={openSmoking}
-                        value={formData.smoking}
-                        items={smokingArray}
-                        setOpen={setOpenSmoking}
-                        style={{
-                            zIndex: 1,
-                            backgroundColor: '#fff3f4',
-                        }}
-                        setValue={(callback) => {
-                            const value = typeof callback === 'function' ? callback(formData.bloodGroup) : callback;
-                            handleInputChange('smoking', value);
-                            console.log('smoking', value);
-                        }}
-                        placeholder="Select Smoking Habits"
-                        direction=""
-                    />
-
-                    <FieldHelperText error={errors.smoking} />
-                </View>
-
-                <Text style={styles.subHeader}>Contact Show</Text>
-                <View style={styles.input}>
+            <Text style={styles.subHeader}>Contact Show</Text>
+                <View style={[styles.input,
+                    { zIndex: openContactShow ? 2000 : 1 },
+                ]}>
                     <DropDownPicker
                         open={openContactShow}
                         value={formData.contactShow}
@@ -644,8 +605,9 @@ const Step3 = () => {
                 >
                     Continue
                 </Button>
-            </View>
-        </ScrollView>
+        </View>
+    </ScrollView>
+    
     );
 };
 

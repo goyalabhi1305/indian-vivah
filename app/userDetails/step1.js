@@ -8,7 +8,7 @@ import FieldHelperText from '../../component/FieldHelperText';
 import useSWR from 'swr';
 import { GetOnBoardingSheet, UserOnBoard } from '../../services/endpoint';
 import Toast from 'react-native-toast-message';
-// import DatePicker from 'react-native-date-picker';
+import DatePicker from 'react-native-date-picker';
 
 const Step1 = () => {
   const router = useRouter();
@@ -17,6 +17,7 @@ const Step1 = () => {
     firstName: '',
     lastName: '',
     // age: '',
+    dob: '',
     gender: null,
     email: '',
     religion: null,
@@ -33,7 +34,7 @@ const Step1 = () => {
     return response.data;
   }
 
-  const { data, isLoading:isLoading2 } = useSWR('getOnBoardingSheetData', fetcher);
+  const { data, isLoading: isLoading2 } = useSWR('getOnBoardingSheetData', fetcher);
 
 
   const fetcher2 = async () => {
@@ -41,13 +42,15 @@ const Step1 = () => {
     return response.data?.data;
   }
 
-  const {data:formFetchedData, isLoading} = useSWR('getOnboardData', fetcher2);
+  const { data: formFetchedData, isLoading } = useSWR('getOnboardData', fetcher2);
 
   useEffect(() => {
-    if(formFetchedData){
+    if (formFetchedData) {
+      console.log("formFetchedData", formFetchedData);
       setFormData({
         firstName: formFetchedData.firstName,
         lastName: formFetchedData.lastName,
+        dob: formFetchedData.dob,
         gender: formFetchedData?.gender,
         email: formFetchedData.email,
         religion: formFetchedData.religion ? JSON.parse(formFetchedData.religion) : null,
@@ -57,13 +60,14 @@ const Step1 = () => {
 
       });
 
-      const regiousData = formFetchedData.religion ?  JSON.parse(formFetchedData.religion) : null;
+      const regiousData = formFetchedData.religion ? JSON.parse(formFetchedData.religion) : null;
       setReligionId(regiousData?.id);
 
     }
   }, [formFetchedData]);
 
   const [errors, setErrors] = useState({});
+  const [open, setOpen] = useState(false);
 
   const [openGender, setOpenGender] = useState(false);
   const [genderItems, setGenderItems] = useState([
@@ -143,21 +147,19 @@ const Step1 = () => {
   };
 
   const handleContinue = async () => {
-    Toast.show({
-      type: 'error',
-      text1: 'Error',
-    });
+  
     if (validateFields()) {
       // Call dummy API on successful validation
       // console.log('Form submitted:', formData);
       // setTimeout(() => alert('Form submitted successfully!'), 500);
       // router.replace('userDetails/step2');
-      try{
-        
+      try {
+
         setLoading(true);
         const payload = {
           firstName: formData.firstName,
           lastName: formData.lastName,
+          dob: formData.dob,
           gender: formData.gender,
           email: formData.email,
           religion: JSON.stringify(formData.religion),
@@ -170,34 +172,34 @@ const Step1 = () => {
 
 
         router.push('userDetails/step2');
-          
+
         setLoading(false);
-      }catch(error){
+      } catch (error) {
         Toast.show({
           type: 'error',
           text1: 'Error',
         });
         setLoading(false);
-        console.log("error",error);
+        console.log("error", error);
       }
 
     }
   };
 
-  if(isLoading || isLoading2){
+  if (isLoading || isLoading2) {
     return <View
-    style={{
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
     >
       <ActivityIndicator size="large" />
     </View>
   }
 
 
-  
+
 
   return (
     <AutocompleteDropdownContextProvider>
@@ -224,6 +226,34 @@ const Step1 = () => {
           />
           <FieldHelperText error={errors.lastName} />
 
+          <Button
+            mode="outlined"
+            onPress={() => setOpen(true)}
+            style={styles.buttons}
+          >
+            {formData.dob ? new Date(formData.dob).toDateString() : 'Select Date of Birth'}
+          </Button>
+
+          <DatePicker
+            modal
+            open={open}
+            date={
+              formData.dob ? new Date(formData.dob) : new Date()
+            }
+            onConfirm={(date) => {
+              setOpen(false)
+              handleInputChange('dob', date)
+            }}
+            theme='light'
+            mode="date"
+            onCancel={() => {
+              setOpen(false)
+            }}
+            maximumDate={new Date()} 
+          />
+          <FieldHelperText error={errors.gender} />
+
+
           {/* <TextInput
             label="Age"
             mode="outlined"
@@ -236,17 +266,23 @@ const Step1 = () => {
 
           <FieldHelperText error={errors.age} /> */}
 
-          <View style={styles.input}>
+          <View style={[styles.input, { zIndex: openGender ? 2000 : 1 }]}>
             <DropDownPicker
               open={openGender}
               value={formData.gender}
               items={genderItems}
               style={{
                 backgroundColor: '#fff3f4',
-                marginBottom: 5,
-                marginTop: 10
               }}
-
+              containerStyle={{
+                backgroundColor: '#fff3f4',
+                borderRadius: 10,
+              }}
+              dropDownContainerStyle={{
+                zIndex: 2000,
+                borderColor: '#d0d0d0',
+                backgroundColor: '#ffffff',
+              }}
               setOpen={setOpenGender}
               setValue={(callback) => {
                 const value = typeof callback === 'function' ? callback(formData.gender) : callback;
@@ -254,15 +290,10 @@ const Step1 = () => {
                 console.log('Selected Gender:', value);
               }}
               setItems={setGenderItems}
-              
               placeholder="Select Gender"
             />
           </View>
-          {/* <HelperText type="error" visible={!!errors.gender}>
-            {errors.gender}
-          </HelperText> */}
           <FieldHelperText error={errors.gender} />
-
 
 
 
@@ -277,40 +308,41 @@ const Step1 = () => {
           <FieldHelperText error={errors.email} />
 
           {
-           religions?.length > 0 && <View style={styles.input}>
-             <AutocompleteDropdown
-               clearOnFocus={false}
-               closeOnBlur={true}
-               placeholder="Select Religion"
-               initialValue={{
-                 id: religionId
-               }}
-               onSelectItem={(item) => {
-                 setSelectedItem(item);
-                 handleInputChange('religion', item)}}
-               dataSet={religions}
-               inputContainerStyle={{
-                 backgroundColor: '#fff3f4',
-                 borderRadius: 10,
-                 width: '100%',
-                 borderColor: '#000',
-                 borderWidth: 1,
-                 marginTop: 10,
-               }}
-               
-               textInputProps={{
-                 placeholder: 'Select Religion',
-                 autoCorrect: false,
-                 autoCapitalize: 'none',
-                 style: {
-                   borderRadius: 25,
-                   backgroundColor: '#fff3f4',
-                   color: '#000',
-                   paddingLeft: 18,
-                 },
-               }}
-             />
-           </View>
+            religions?.length > 0 && <View style={styles.input}>
+              <AutocompleteDropdown
+                clearOnFocus={false}
+                closeOnBlur={true}
+                placeholder="Select Religion"
+                initialValue={{
+                  id: religionId
+                }}
+                onSelectItem={(item) => {
+                  setSelectedItem(item);
+                  handleInputChange('religion', item)
+                }}
+                dataSet={religions}
+                inputContainerStyle={{
+                  backgroundColor: '#fff3f4',
+                  borderRadius: 10,
+                  width: '100%',
+                  borderColor: '#000',
+                  borderWidth: 1,
+                  marginTop: 10,
+                }}
+
+                textInputProps={{
+                  placeholder: 'Select Religion',
+                  autoCorrect: false,
+                  autoCapitalize: 'none',
+                  style: {
+                    borderRadius: 25,
+                    backgroundColor: '#fff3f4',
+                    color: '#000',
+                    paddingLeft: 18,
+                  },
+                }}
+              />
+            </View>
           }
 
 
@@ -327,7 +359,7 @@ const Step1 = () => {
                 borderWidth: 1,
                 marginTop: 10,
               }}
-              
+
               textInputProps={{
                 placeholder: 'Select Caste',
                 autoCorrect: false,
@@ -343,6 +375,8 @@ const Step1 = () => {
               dataSet={casts}
             />
           </View>
+
+
 
           <TextInput
             label="Sub Caste / Gotra"
@@ -425,11 +459,16 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 10,
     backgroundColor: '#fff3f4',
+    zIndex: 1000
     // marginBottom: 10,
   },
   button: {
     marginTop: 30,
   },
+  buttons: {
+    marginTop: 30,
+    marginBottom: 10
+  }
 });
 
 export default Step1;
