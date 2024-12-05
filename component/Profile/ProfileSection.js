@@ -31,7 +31,7 @@ const ProfileSection = ({ data }) => {
           </Text>
           <Divider />
           <Text style={[styles.text, { marginTop: 16, marginBottom: 16 }]}>
-            {data.aboutCareer}
+            {data?.aboutCareer}
           </Text>
         </Card.Content>
       </Card>
