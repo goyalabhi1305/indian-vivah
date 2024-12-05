@@ -1,10 +1,14 @@
 import React, { useEffect, useCallback } from "react";
-import { FlatList, View, StyleSheet, RefreshControl } from "react-native";
+import { FlatList, View, StyleSheet, RefreshControl, ScrollView } from "react-native";
 import { ActivityIndicator, Avatar, Button, Text } from "react-native-paper";
 import ProfileCard from "./Card/ProfileCard";
 import { GetProfileDetailUser } from "../services/endpoint";
 import { GetAllUsers } from "../services/calls/GetAllUsers.api";
 import useSWR from "swr";
+import ShimmerPlaceholder from "react-native-shimmer-placeholder";
+import { LinearGradient } from 'expo-linear-gradient';
+import CardSkeletonLoader from "./Skelaton/CardSkelaton";
+
 
 const HomeComponent = () => {
     const [config, setConfig] = React.useState({ refreshing: false });
@@ -14,6 +18,31 @@ const HomeComponent = () => {
     const [loading, setLoading] = React.useState(true);
     const [isEndReached, setIsEndReached] = React.useState(false);
     const [page, setPage] = React.useState(1);
+
+
+    const SkelatonLoader = () => {
+		return (
+			<View>
+
+				<ScrollView
+					
+					showsHorizontalScrollIndicator={false}
+					contentContainerStyle={styles.containerSkeleton}
+				>
+					{
+						[1, 2, 3, 4, 5].map((item, index) => (
+							<View>
+								<CardSkeletonLoader />
+
+							</View>
+						))
+
+					}
+				</ScrollView>
+                
+			</View>
+		);
+	};
 
     const fetcher = async () => {
         const response = await GetProfileDetailUser()
@@ -125,7 +154,8 @@ const HomeComponent = () => {
     if (loading || isLoading) {
         return (
             <View style={styles.centered}>
-                <ActivityIndicator size="large" />
+                {/* <ActivityIndicator size="large" /> */}
+                <SkelatonLoader />
             </View>
         );
     }
@@ -193,6 +223,14 @@ const styles = StyleSheet.create({
         marginVertical: 8,
         marginLeft: 16,
     },
+
+    containerSkeleton: {
+        display: "flex",
+        flexDirection: "column",
+        gap: 10,
+        padding: 10,
+        
+    }
 });
 
 export default HomeComponent;
