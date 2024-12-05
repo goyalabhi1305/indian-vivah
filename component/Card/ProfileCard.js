@@ -134,7 +134,7 @@ const ProfileCard = ({ item , cardType= 'normal',
                 style={{ position: 'relative' }}
             >
 
-                <Card style={styles.card} elevation={0}>
+                <Card style={styles.card} elevation={5}>
                     <Image
                         source={{ uri: item.avatar }}
 
@@ -370,7 +370,8 @@ const styles = StyleSheet.create({
         marginHorizontal: 16,
         marginVertical: 8,
         position: 'relative',
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
+        elevation: 5,
     },
     heartIcon: {
         marginRight: 20,
