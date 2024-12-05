@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   tabBar: {
-    backgroundColor: '#ff4f4f', // Tab bar background color
+    backgroundColor: 'black', // Tab bar background color
     shadowOffset: 'none', // Remove
   },
   indicator: {
