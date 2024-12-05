@@ -173,9 +173,20 @@ const MyFeedComponent = () => {
   }, [feedClient]);
 
   return (
-    <>
+    <View
+    style={{
+      flex: 1,
+      backgroundColor: '#FFF3F4'
+    }}
+    >
       {
-        metadata?.__typename === "FeedMetadata" ? <ScrollView>
+        metadata?.__typename === "FeedMetadata" ? <ScrollView
+        
+        contentContainerStyle={{
+          backgroundColor: '#FFF3F4'
+        }}
+
+        >
           {items.map((item) => (
             <NotificationFeedCell key={item.id} item={item} />
           ))}
@@ -191,7 +202,7 @@ const MyFeedComponent = () => {
                 <Text
                 style={{
                   fontSize: 20,
-                  fontWeight: 'bold'
+                  fontWeight: 'bold',
                 }}
                 >No notifications found 🙃</Text>
               </View>
@@ -206,7 +217,7 @@ const MyFeedComponent = () => {
         </View>
       }
 
-    </>
+    </View>
   );
 };
 
