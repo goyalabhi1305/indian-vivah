@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import CarouselCards from './CrouselCards'
 import ProfileSection from './ProfileSection'
@@ -23,14 +23,17 @@ const ProfilePage = () => {
     fetcher)
 
   if (isLoading) {
-    return <View style={{
-      display: 'flex',
+    return <View 
+    style={{
+      height: "95%",
       justifyContent: 'center',
       alignItems: 'center',
-      height: '500'
-    }}>
+      backgroundColor: '#FFF3F4'
+    }}
+    >
       <ActivityIndicator size="large" />
-    </View>
+     
+  </View>
   }
 
 
@@ -53,6 +56,6 @@ export default ProfilePage
 
 const styles = StyleSheet.create({
   contentContainer: {
-    backgroundColor: '#FFF3F4'
+    backgroundColor: '#FFF3F4',
   },
 })
